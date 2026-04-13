@@ -342,9 +342,11 @@ function initGlitchEffect() {
 }
 
 /* ===================================
-   자유게시판 (Free Board - LocalStorage Mock)
+   자유게시판 (Free Board - Supabase Backend)
    =================================== */
-const BOARD_STORAGE_KEY = 'sk_hynix_portfolio_board';
+const SUPABASE_URL = 'https://pfvngqhwppxykwfyyvdw.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_f4FS8kUDV7pPtdO21eFZBQ_uKVMLCmy';
+const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
 function initBoard() {
     const form = document.getElementById('board-form');
@@ -389,42 +391,29 @@ function initBoard() {
     });
 }
 
-function savePost(post) {
-    const posts = getPosts();
-    posts.unshift(post); // Add to beginning
-    localStorage.setItem(BOARD_STORAGE_KEY, JSON.stringify(posts));
-    renderPosts(posts);
-}
-
-function getPosts() {
-    const loaded = localStorage.getItem(BOARD_STORAGE_KEY);
-    if (!loaded) {
-        // Initial Mock Data
-        const mockData = [
-            {
-                id: 'mock1',
-                name: '선배 엔지니어',
-                password: '1234',
-                message: '자동화 앱 프로토타입 아이디어가 좋네요. 현장에 오면 큰 도움이 될 것 같습니다.',
-                timestamp: new Date(Date.now() - 86400000).toISOString() // 1 day ago
-            },
-            {
-                id: 'mock2',
-                name: '익명',
-                password: '1234',
-                message: '포트폴리오 디자인이 굉장히 깔끔하고 직관적입니다. Vibe Coding 방식이 인상깊네요!',
-                timestamp: new Date(Date.now() - 172800000).toISOString() // 2 days ago
-            }
-        ];
-        localStorage.setItem(BOARD_STORAGE_KEY, JSON.stringify(mockData));
-        return mockData;
+async function savePost(post) {
+    if (!supabase) return;
+    const { error } = await supabase.from('posts').insert([post]);
+    if (error) {
+        console.error('Error saving post:', error);
+        alert('게시글 저장 중 오류가 발생했습니다.');
+        return;
     }
-    return JSON.parse(loaded);
+    loadPosts();
 }
 
-function loadPosts() {
-    const posts = getPosts();
-    renderPosts(posts);
+async function loadPosts() {
+    if (!supabase) return;
+    const { data, error } = await supabase
+        .from('posts')
+        .select('*')
+        .order('timestamp', { ascending: false });
+    
+    if (error) {
+        console.error('Error loading posts:', error);
+        return;
+    }
+    renderPosts(data || []);
 }
 
 function renderPosts(posts) {
@@ -473,29 +462,36 @@ function renderPosts(posts) {
 }
 
 // Post Action Functions
-window.deletePost = function(postId) {
-    let posts = getPosts();
-    const post = posts.find(p => p.id === postId);
-    if(!post) return;
+window.deletePost = async function(postId) {
+    if (!supabase) return;
+    
+    const { data: posts, error: fetchError } = await supabase.from('posts').select('*').eq('id', postId);
+    if (fetchError || !posts.length) return;
+    const post = posts[0];
 
     const pwd = prompt('게시글 삭제를 위해 비밀번호 4자리를 입력해주세요.\n(마스터 비밀번호로 강제 삭제 가능)');
     if (pwd === null) return; // Cancelled
     
     if (pwd === post.password || pwd === '0000') {
         if(confirm('정말 이 게시글을 삭제하시겠습니까?')) {
-            posts = posts.filter(p => p.id !== postId);
-            localStorage.setItem(BOARD_STORAGE_KEY, JSON.stringify(posts));
-            renderPosts(posts);
+            const { error: deleteError } = await supabase.from('posts').delete().eq('id', postId);
+            if (deleteError) {
+                alert('삭제 중 오류가 발생했습니다.');
+            } else {
+                loadPosts();
+            }
         }
     } else {
         alert('비밀번호가 일치하지 않습니다.');
     }
 };
 
-window.editPost = function(postId) {
-    let posts = getPosts();
-    const post = posts.find(p => p.id === postId);
-    if(!post) return;
+window.editPost = async function(postId) {
+    if (!supabase) return;
+    
+    const { data: posts, error: fetchError } = await supabase.from('posts').select('*').eq('id', postId);
+    if (fetchError || !posts.length) return;
+    const post = posts[0];
 
     const pwd = prompt('게시글 수정을 위해 비밀번호 4자리를 입력해주세요.\n(마스터 비밀번호로 강제 수정 가능)');
     if (pwd === null) return; // Cancelled
@@ -515,29 +511,30 @@ window.cancelEdit = function(postId) {
     if(postEl) {
         postEl.classList.remove('editing');
         const input = postEl.querySelector('.post-edit-input');
-        const post = getPosts().find(p => p.id === postId);
-        if(post) input.value = post.message; // revert
+        // Re-fetch or reset from DOM if needed, here we just clear the edit state
     }
 };
 
-window.saveEdit = function(postId) {
+window.saveEdit = async function(postId) {
+    if (!supabase) return;
+    
     const postEl = document.querySelector(`.board-post[data-id="${postId}"]`);
     if(!postEl) return;
     
     const input = postEl.querySelector('.post-edit-input');
     const newMsg = input.value.trim();
     
-    if(!newMsg) {
-        alert('내용을 입력해주세요.');
-        return;
-    }
-    
-    let posts = getPosts();
-    const index = posts.findIndex(p => p.id === postId);
-    if(index !== -1) {
-        posts[index].message = newMsg;
-        localStorage.setItem(BOARD_STORAGE_KEY, JSON.stringify(posts));
-        renderPosts(posts);
+    if(!newMsg) return;
+
+    const { error: updateError } = await supabase
+        .from('posts')
+        .update({ message: newMsg })
+        .eq('id', postId);
+
+    if (updateError) {
+        alert('저장 중 오류가 발생했습니다.');
+    } else {
+        loadPosts();
     }
 };
 
