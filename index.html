@@ -545,7 +545,7 @@
             <div class="board-container">
                 <div class="board-input-area">
                     <h3>남기고 싶은 말</h3>
-                    <form id="board-form" class="board-form">
+                    <form id="board-form" class="board-form" onsubmit="return handleBoardSubmit(event)">
                         <div class="form-group" style="display: flex; gap: 10px;">
                             <input type="text" id="board-name" placeholder="이름 (익명 가능)" style="flex: 1;">
                             <input type="password" id="board-password" placeholder="비밀번호 4자리 (수정/삭제용)" maxlength="4" style="flex: 1;" required>

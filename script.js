@@ -360,60 +360,62 @@ try {
     console.error('Supabase initialization error:', e);
 }
 
-function initBoard() {
-    const form = document.getElementById('board-form');
-    if (!form) {
-        console.warn('Board form not found.');
-        return;
+// Global handler for board submission to prevent refresh reliably
+window.handleBoardSubmit = async function(event) {
+    if (event) event.preventDefault();
+    console.log('handleBoardSubmit triggered');
+
+    const nameInput = document.getElementById('board-name');
+    const passwordInput = document.getElementById('board-password');
+    const messageInput = document.getElementById('board-message');
+    
+    if (!messageInput || !passwordInput) {
+        alert('입력 필드를 찾을 수 없습니다.');
+        return false;
     }
 
-    console.log('Board initialized, attaching submit listener...');
+    if (!messageInput.value.trim() || !passwordInput.value.trim()) {
+        alert('메시지와 비밀번호를 모두 입력해주세요.');
+        return false;
+    }
+
+    if (!supabase) {
+        // Try one last time to init
+        const supabaseLib = window.supabase || window.Supabase;
+        if (supabaseLib) {
+            supabase = supabaseLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+    }
+
+    if (!supabase) {
+        alert('Supabase 라이브러리 로드에 실패했습니다. 인터넷 연결이나 차단 설정을 확인해주세요.');
+        return false;
+    }
+
+    const newPost = {
+        id: Date.now().toString(),
+        name: nameInput.value.trim() || '익명',
+        password: passwordInput.value.trim(),
+        message: messageInput.value.trim(),
+        timestamp: new Date().toISOString()
+    };
+
+    console.log('Saving post to Supabase:', newPost);
+    savePost(newPost);
+    
+    // Form reset
+    if (nameInput) nameInput.value = '';
+    if (passwordInput) passwordInput.value = '';
+    if (messageInput) messageInput.value = '';
+    
+    return false;
+};
+
+// Keep initBoard for loading posts
+function initBoard() {
+    const form = document.getElementById('board-form');
+    if (!form) return;
     loadPosts();
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        console.log('Form submission intercepted.');
-        
-        const nameInput = document.getElementById('board-name');
-        const passwordInput = document.getElementById('board-password');
-        const messageInput = document.getElementById('board-message');
-        
-        if (!messageInput.value.trim() || !passwordInput.value.trim()) {
-            alert('메시지와 비밀번호를 모두 입력해주세요.');
-            return;
-        }
-
-        if (!supabase) {
-            alert('데이터베이스 연결에 실패했습니다. (Supabase Script가 로드되지 않음)');
-            return;
-        }
-
-        const newPost = {
-            id: Date.now().toString(),
-            name: nameInput.value.trim() || '익명',
-            password: passwordInput.value.trim(),
-            message: messageInput.value.trim(),
-            timestamp: new Date().toISOString()
-        };
-
-        savePost(newPost);
-        
-        // Form reset
-        nameInput.value = '';
-        passwordInput.value = '';
-        messageInput.value = '';
-        
-        // Show success effect (button pulse)
-        const btn = form.querySelector('button');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<span>등록 완료!</span>';
-        btn.style.background = 'var(--terminal-green)';
-        
-        setTimeout(() => {
-            btn.innerHTML = originalText;
-            btn.style.background = '';
-        }, 2000);
-    });
 }
 
 async function savePost(post) {
