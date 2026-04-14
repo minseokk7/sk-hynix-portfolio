@@ -346,22 +346,47 @@ function initGlitchEffect() {
    =================================== */
 const SUPABASE_URL = 'https://pfvngqhwppxykwfyyvdw.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_f4FS8kUDV7pPtdO21eFZBQ_uKVMLCmy';
-const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+// Robust client initialization
+let supabase = null;
+try {
+    const supabaseLib = window.supabase || window.Supabase;
+    if (supabaseLib) {
+        supabase = supabaseLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } else {
+        console.error('Supabase library not found. Check if the CDN script is loaded.');
+    }
+} catch (e) {
+    console.error('Supabase initialization error:', e);
+}
 
 function initBoard() {
     const form = document.getElementById('board-form');
-    if (!form) return;
+    if (!form) {
+        console.warn('Board form not found.');
+        return;
+    }
 
+    console.log('Board initialized, attaching submit listener...');
     loadPosts();
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        console.log('Form submission intercepted.');
         
         const nameInput = document.getElementById('board-name');
         const passwordInput = document.getElementById('board-password');
         const messageInput = document.getElementById('board-message');
         
-        if (!messageInput.value.trim() || !passwordInput.value.trim()) return;
+        if (!messageInput.value.trim() || !passwordInput.value.trim()) {
+            alert('메시지와 비밀번호를 모두 입력해주세요.');
+            return;
+        }
+
+        if (!supabase) {
+            alert('데이터베이스 연결에 실패했습니다. (Supabase Script가 로드되지 않음)');
+            return;
+        }
 
         const newPost = {
             id: Date.now().toString(),
@@ -552,6 +577,14 @@ function escapeHtml(unsafe) {
    초기화 (Application Bootstrap)
    =================================== */
 document.addEventListener('DOMContentLoaded', () => {
+    // 1순위: 게시판 기능 (가장 중요)
+    try {
+        initBoard();
+    } catch (e) {
+        console.error('initBoard failed:', e);
+    }
+
+    // 2순위: 비주얼 효과
     try {
         initParticles();
         initHeroEffects();
@@ -564,8 +597,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initTerminalTyping();
         initSmoothScroll();
         initGlitchEffect();
-        initBoard();
     } catch (error) {
-        console.error('Initialization error:', error);
+        console.error('Optimization/Visual initialization error:', error);
     }
 });
