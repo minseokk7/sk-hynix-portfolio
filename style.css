@@ -423,7 +423,7 @@ body {
 
 .section-header {
     text-align: center;
-    margin-bottom: 4rem;
+    margin-bottom: 2.5rem;
 }
 
 .section-tag {
@@ -457,8 +457,104 @@ body {
 
 /* --- DNA Section --- */
 .dna-section {
-    padding: 8rem 0;
+    padding: 6rem 0 4rem;
     position: relative;
+}
+
+/* Radar Chart Styling */
+.radar-chart-container {
+    max-width: 500px;
+    margin: 0 auto 4rem;
+    position: relative;
+    padding: 20px;
+}
+
+.radar-chart-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+}
+
+.radar-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.grid-line {
+    fill: none;
+    stroke: var(--border-color);
+    stroke-width: 1px;
+    stroke-dasharray: 4;
+}
+
+.axis-line {
+    stroke: var(--border-color);
+    stroke-width: 1.5px;
+}
+
+.radar-poly {
+    fill: var(--hynix-red-glow);
+    stroke: var(--hynix-red);
+    stroke-width: 2.5px;
+    filter: drop-shadow(0 0 10px rgba(230, 0, 18, 0.3));
+}
+
+.radar-point {
+    fill: #ffffff;
+    stroke: var(--hynix-red);
+    stroke-width: 2px;
+}
+
+.radar-labels {
+    position: absolute;
+    inset: -20px;
+    pointer-events: none;
+}
+
+.radar-label {
+    position: absolute;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    transform: translate(-50%, -50%);
+}
+
+.radar-label[data-index="0"] { top: 0%; left: 50%; }
+.radar-label[data-index="1"] { top: 35%; left: 100%; }
+.radar-label[data-index="2"] { top: 90%; left: 80%; }
+.radar-label[data-index="3"] { top: 90%; left: 20%; }
+.radar-label[data-index="4"] { top: 35%; left: 0%; }
+
+.radar-legend {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f8fafc;
+    padding: 8px 16px;
+    border-radius: 100px;
+    border: 1px solid var(--border-color);
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    background: var(--hynix-red);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--hynix-red-glow);
+}
+
+.legend-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
 }
 
 .dna-section::before {
@@ -1240,9 +1336,28 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.board-db-mention {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #f8fafc;
+    padding: 6px 14px;
+    border-radius: 100px;
+    border: 1px solid var(--border-color);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.board-db-mention img {
+    opacity: 0.8;
 }
 
 .btn-add-post {
