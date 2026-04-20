@@ -544,50 +544,56 @@ async function asyncBoardSubmission() {
     }
 }
 
-// Reply Submission Logic
-// Toggle Replies and Form
+// Reply Modal Logic
+window.openReplyModal = function(parentId) {
+    const modal = document.getElementById('reply-modal');
+    const parentInput = document.getElementById('reply-parent-id');
+    if (!modal || !parentInput) return;
+    
+    parentInput.value = parentId;
+    modal.classList.add('active');
+    
+    // Reset fields
+    document.getElementById('reply-name').value = '';
+    document.getElementById('reply-password').value = '';
+    document.getElementById('reply-message').value = '';
+    
+    document.getElementById('reply-message').focus();
+};
+
+window.closeReplyModal = function() {
+    const modal = document.getElementById('reply-modal');
+    if (modal) modal.classList.remove('active');
+};
+
+// Toggle Thread Visibility
 window.toggleReplies = function(parentId) {
     const postEl = document.querySelector(`.board-post[data-id="${parentId}"]`);
     if (!postEl) return;
     
-    // Toggle the replies thread and form container
     const wrapper = postEl.querySelector('.replies-wrapper');
-    const replyForm = postEl.querySelector('.reply-form-container');
-    
+    if (!wrapper) return;
+
     if (wrapper.style.display === 'block') {
         wrapper.style.display = 'none';
-        replyForm.classList.remove('active');
     } else {
         wrapper.style.display = 'block';
-        replyForm.classList.add('active');
-        replyForm.querySelector('.reply-textarea').focus();
     }
 };
 
-window.cancelReply = function(parentId) {
-    const postEl = document.querySelector(`.board-post[data-id="${parentId}"]`);
-    const wrapper = postEl?.querySelector('.replies-wrapper');
-    const replyForm = postEl?.querySelector('.reply-form-container');
-    
-    if (replyForm) {
-        replyForm.classList.remove('active');
-        replyForm.querySelector('.reply-textarea').value = '';
-        if (wrapper) wrapper.style.display = 'none';
-    }
-};
-
-window.submitReply = async function(parentId) {
+window.submitReply = async function() {
     if (!supabaseClient) return;
     
-    const postEl = document.querySelector(`.board-post[data-id="${parentId}"]`);
-    const nameInput = postEl.querySelector('.reply-name');
-    const passwordInput = postEl.querySelector('.reply-password');
-    const messageInput = postEl.querySelector('.reply-textarea');
+    const parentId = document.getElementById('reply-parent-id').value;
+    const nameInput = document.getElementById('reply-name');
+    const passwordInput = document.getElementById('reply-password');
+    const messageInput = document.getElementById('reply-message');
     
     const message = messageInput.value.trim();
     const password = passwordInput.value.trim();
+    
     if (!message || !password) {
-        alert('답글 내용과 비밀번호를 입력해주세요.');
+        alert('내용과 비밀번호를 입력해주세요.');
         return;
     }
     
@@ -597,7 +603,7 @@ window.submitReply = async function(parentId) {
         name = `익명(${randomId})`;
     }
     
-    const saveBtn = postEl.querySelector('.reply-actions .save');
+    const saveBtn = document.getElementById('reply-submit-btn');
     saveBtn.disabled = true;
     saveBtn.innerText = '등록 중...';
     
@@ -611,13 +617,23 @@ window.submitReply = async function(parentId) {
         
         if (error) throw error;
         
-        loadPosts(); // Refresh list
+        closeReplyModal();
+        await loadPosts(); // Refresh list
+        
+        // Auto-open the thread to show the new reply
+        setTimeout(() => {
+            const wrapper = document.querySelector(`.board-post[data-id="${parentId}"] .replies-wrapper`);
+            if (wrapper) wrapper.style.display = 'block';
+        }, 100);
+        
     } catch (err) {
         console.error('Reply submission error:', err);
         alert('답글 등록 중 오류가 발생했습니다.');
     } finally {
-        saveBtn.disabled = false;
-        saveBtn.innerText = '답글 등록';
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerText = '답글 등록';
+        }
     }
 };
 
@@ -750,9 +766,12 @@ function renderSinglePost(container, post, isReply, replies = []) {
             </div>
             <div class="post-actions">
                 ${!isReply ? `
-                <button class="btn-post-action reply-toggle" onclick="toggleReplies('${post.id}')" title="댓글 보기/작성">
+                <button class="btn-post-action reply-toggle" onclick="${replies.length > 0 ? `toggleReplies('${post.id}')` : `openReplyModal('${post.id}')`}" title="${replies.length > 0 ? "답글 보기/작성" : "답글 작성"}">
                     <span class="reply-count">${replies.length}</span>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </button>
+                <button class="btn-post-action reply-add" onclick="openReplyModal('${post.id}')" title="신규 답글 작성" style="color: var(--hynix-red); margin-left: 4px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 </button>
                 ` : ''}
                 <button class="btn-post-action edit" onclick="editPost('${post.id}')" title="수정">
@@ -774,20 +793,6 @@ function renderSinglePost(container, post, isReply, replies = []) {
                 <button class="btn-post-action save" onclick="saveEdit('${post.id}')">저장</button>
             </div>
         </div>
-
-        ${!isReply ? `
-        <div class="reply-form-container">
-            <div class="reply-form-grid">
-                <input type="text" class="reply-name" placeholder="닉네임 (익명)" maxlength="10">
-                <input type="password" class="reply-password" placeholder="비밀번호 4자리" maxlength="4">
-            </div>
-            <textarea class="reply-textarea" placeholder="답글 내용을 입력하세요..."></textarea>
-            <div class="reply-actions">
-                <button class="btn-post-action cancel" onclick="cancelReply('${post.id}')">취소</button>
-                <button class="btn-post-action save" onclick="submitReply('${post.id}')">답글 등록</button>
-            </div>
-        </div>
-        ` : ''}
 
         ${repliesHtml}
     `;

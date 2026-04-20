@@ -1704,34 +1704,26 @@ body {
     border-top: 1px solid var(--border-color);
 }
 
-.reply-form-container {
-    display: none;
-    margin: 1.5rem 0 1.5rem 3rem;
-    padding: 1.5rem;
-    background: var(--bg-primary);
-    border-radius: 20px;
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-md);
-    animation: slideDown 0.4s var(--ease-out-expo);
-    position: relative;
+/* --- Reply Modal Specific --- */
+.reply-modal-content {
+    max-width: 500px;
 }
 
-.reply-form-container::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 20px;
-    padding: 1px;
-    background: linear-gradient(135deg, var(--hynix-red-glow), transparent);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-}
-
-.reply-form-container.active {
+.modal-label {
     display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    margin-top: 1rem;
+}
+
+#reply-modal .modal-body {
+    padding-top: 0;
+}
+
+#reply-modal .reply-form-grid {
+    margin-top: 0;
 }
 
 .reply-form-grid {

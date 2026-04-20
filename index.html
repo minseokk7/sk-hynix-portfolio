@@ -649,7 +649,38 @@
         </div>
     </footer>
 
+    <!-- Reply Modal -->
+    <div id="reply-modal" class="modal-backdrop">
+        <div class="modal-content reply-modal-content">
+            <div class="modal-header">
+                <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px; vertical-align:middle;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>답글 남기기</h3>
+                <button class="close-modal" onclick="closeReplyModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="reply-parent-id">
+                <div class="reply-form-grid">
+                    <div class="form-group">
+                        <label class="modal-label">작성자 (익명)</label>
+                        <input type="text" id="reply-name" class="reply-name" placeholder="닉네임 (미입력 시 익명)" maxlength="10">
+                    </div>
+                    <div class="form-group">
+                        <label class="modal-label">비밀번호 (4자리)</label>
+                        <input type="password" id="reply-password" class="reply-password" placeholder="비밀번호" maxlength="4">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="modal-label">메시지</label>
+                    <textarea id="reply-message" class="reply-textarea" placeholder="답글 내용을 입력하세요..." rows="4"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-post-action cancel" onclick="closeReplyModal()">취소</button>
+                <button id="reply-submit-btn" class="btn-post-action save" onclick="submitReply()">답글 등록</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script.js?v=1.1.5"></script>
+    <script src="script.js?v=1.1.6"></script>
 </body>
 </html>
