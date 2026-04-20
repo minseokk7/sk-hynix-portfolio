@@ -3,7 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="SK 하이닉스 반도체 유지보수 엔지니어 포트폴리오 - HBM/AI 반도체 시대의 하이브리드 DT 엔지니어">
+    <meta name="description" content="SK 하이닉스 반도체 유지보수 엔지니어 포트폴리오 - HBM/AI 반도체 시대의 하이브리드 DT 엔지니어 장민석">
+    <meta name="keywords" content="SK하이닉스, 반도체 유지보수, 유지보수 엔지니어, HBM, DT 엔지니어, 로봇자동화, 장민석, 포트폴리오">
+    <meta name="author" content="Minseok Jang">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://minseokk7.github.io/sk-hynix-portfolio/">
+    <meta property="og:title" content="장민석 | SK 하이닉스 유지보수 엔지니어 포트폴리오">
+    <meta property="og:description" content="하드웨어 실무 역량과 AI/DT 기술을 겸비한 차세대 유지보수 엔지니어의 실무 포트폴리오입니다.">
+    <meta property="og:image" content="images/hbm_hero_1775442608097.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
     <title>Portfolio | SK Hynix Maintenance Engineer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -90,6 +103,38 @@
                 <h2 class="section-title">Maintenance <span class="text-red">DNA</span></h2>
                 <p class="section-desc">반도체 유지보수 직무에 최적화된 하드웨어/소프트웨어 융합 역량</p>
             </div>
+
+            <!-- Radar Chart Container -->
+            <div class="radar-chart-container reveal">
+                <div class="radar-chart-wrap">
+                    <svg id="competency-radar" viewBox="0 0 400 400" class="radar-svg">
+                        <!-- Chart circles/grid -->
+                        <g class="chart-grid"></g>
+                        <!-- Chart axes -->
+                        <g class="chart-axes"></g>
+                        <!-- Chart polygon -->
+                        <path id="radar-polygon" d="" class="radar-poly"></path>
+                        <!-- Chart points -->
+                        <g class="chart-points"></g>
+                    </svg>
+                    
+                    <!-- Labels (Placed via CSS/JS) -->
+                    <div class="radar-labels">
+                        <span class="radar-label" data-index="0">유지보수 로직</span>
+                        <span class="radar-label" data-index="1">하드웨어 제어</span>
+                        <span class="radar-label" data-index="2">DT/AI 활용력</span>
+                        <span class="radar-label" data-index="3">업무 실행력</span>
+                        <span class="radar-label" data-index="4">협업 능력</span>
+                    </div>
+                </div>
+                <div class="radar-legend">
+                    <div class="legend-item">
+                        <span class="legend-dot"></span>
+                        <span class="legend-text">장민석의 핵심 직무 핵심 역량 (Total Score: 90+)</span>
+                    </div>
+                </div>
+            </div>
+
             <div class="dna-grid">
                 <!-- Card 1: Execution -->
                 <div class="dna-card" data-pace="Execution">
@@ -604,6 +649,6 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script.js?v=1.0.8"></script>
+    <script src="script.js?v=1.0.9"></script>
 </body>
 </html>

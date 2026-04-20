@@ -310,6 +310,106 @@ function typeText(element, text, index) {
 }
 
 /* ===================================
+   역량 레이더 차트 (Competency Radar)
+   =================================== */
+function initRadarChart() {
+    const svg = document.getElementById('competency-radar');
+    if (!svg) return;
+
+    const scores = [92, 88, 95, 90, 85]; // [본인 점수]
+    const centerX = 200;
+    const centerY = 200;
+    const maxRadius = 150;
+    const levels = 4; // 축 눈금 개수
+    const axesCount = scores.length;
+
+    const gridGroup = svg.querySelector('.chart-grid');
+    const axesGroup = svg.querySelector('.chart-axes');
+    const poly = document.getElementById('radar-polygon');
+    const pointsGroup = svg.querySelector('.chart-points');
+
+    // 1. 그리드 원(눈금) 그리기
+    for (let i = 1; i <= levels; i++) {
+        const r = (maxRadius / levels) * i;
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", centerX);
+        circle.setAttribute("cy", centerY);
+        circle.setAttribute("r", r);
+        circle.setAttribute("class", "grid-line");
+        gridGroup.appendChild(circle);
+    }
+
+    // 2. 축(Axis) 라인 그리기
+    for (let i = 0; i < axesCount; i++) {
+        const angle = (Math.PI * 2 / axesCount) * i - (Math.PI / 2);
+        const x2 = centerX + Math.cos(angle) * maxRadius;
+        const y2 = centerY + Math.sin(angle) * maxRadius;
+
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", centerX);
+        line.setAttribute("y1", centerY);
+        line.setAttribute("x2", x2);
+        line.setAttribute("y2", y2);
+        line.setAttribute("class", "axis-line");
+        axesGroup.appendChild(line);
+    }
+
+    // 3. 데이터 점 및 폴리곤 초기화 (점 0에서 시작)
+    const getPointsPath = (vals) => {
+        return vals.map((v, i) => {
+            const angle = (Math.PI * 2 / axesCount) * i - (Math.PI / 2);
+            const r = (maxRadius * v) / 100;
+            const x = centerX + Math.cos(angle) * r;
+            const y = centerY + Math.sin(angle) * r;
+            return { x, y };
+        });
+    };
+
+    // 애니메이션 트리거 (IntersectionObserver)
+    let hasAnimated = false;
+    const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && !hasAnimated) {
+            hasAnimated = true;
+            animateRadar();
+        }
+    }, { threshold: 0.5 });
+    
+    observer.observe(svg);
+
+    function animateRadar() {
+        const startTime = performance.now();
+        const duration = 1200;
+
+        function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+
+            const currentScores = scores.map(s => s * eased);
+            const pts = getPointsPath(currentScores);
+            
+            // 폴리곤 경로 업데이트
+            const d = pts.map((p, i) => (i === 0 ? `M ${p.x},${p.y}` : `L ${p.x},${p.y}`)).join(" ") + " Z";
+            poly.setAttribute("d", d);
+
+            // 점 그리기/업데이트
+            pointsGroup.innerHTML = '';
+            pts.forEach(p => {
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("cx", p.x);
+                circle.setAttribute("cy", p.y);
+                circle.setAttribute("r", 4);
+                circle.setAttribute("class", "radar-point");
+                pointsGroup.appendChild(circle);
+            });
+
+            if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+    }
+}
+
+/* ===================================
    부드러운 스크롤 (앵커 링크)
    =================================== */
 function initSmoothScroll() {
@@ -650,6 +750,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initScrollReveal();
         initModalBackdropClose();
         initTerminalTyping();
+        initRadarChart();
         initSmoothScroll();
         initGlitchEffect();
     } catch (error) {
