@@ -544,6 +544,93 @@ async function asyncBoardSubmission() {
     }
 }
 
+// Reply Submission Logic
+window.showReplyForm = function(parentId) {
+    // Hide any other active reply forms first
+    document.querySelectorAll('.reply-form-container').forEach(form => {
+        form.classList.remove('active');
+    });
+    
+    const postEl = document.querySelector(`.board-post[data-id="${parentId}"]`);
+    if (!postEl) return;
+    
+    let replyForm = postEl.querySelector('.reply-form-container');
+    if (!replyForm) {
+        // Create reply form if it doesn't exist
+        replyForm = document.createElement('div');
+        replyForm.className = 'reply-form-container';
+        replyForm.innerHTML = `
+            <div class="reply-form-grid">
+                <input type="text" class="reply-name" placeholder="닉네임 (익명)" maxlength="10">
+                <input type="password" class="reply-password" placeholder="비밀번호 4자리" maxlength="4">
+            </div>
+            <textarea class="reply-textarea" placeholder="답글 내용을 입력하세요..."></textarea>
+            <div class="reply-actions">
+                <button class="btn-post-action cancel" onclick="cancelReply('${parentId}')">취소</button>
+                <button class="btn-post-action save" onclick="submitReply('${parentId}')">답글 등록</button>
+            </div>
+        `;
+        postEl.appendChild(replyForm);
+    }
+    
+    replyForm.classList.add('active');
+    replyForm.querySelector('.reply-textarea').focus();
+};
+
+window.cancelReply = function(parentId) {
+    const postEl = document.querySelector(`.board-post[data-id="${parentId}"]`);
+    const replyForm = postEl?.querySelector('.reply-form-container');
+    if (replyForm) {
+        replyForm.classList.remove('active');
+        replyForm.querySelector('.reply-textarea').value = '';
+    }
+};
+
+window.submitReply = async function(parentId) {
+    if (!supabaseClient) return;
+    
+    const postEl = document.querySelector(`.board-post[data-id="${parentId}"]`);
+    const nameInput = postEl.querySelector('.reply-name');
+    const passwordInput = postEl.querySelector('.reply-password');
+    const messageInput = postEl.querySelector('.reply-textarea');
+    
+    const message = messageInput.value.trim();
+    const password = passwordInput.value.trim();
+    if (!message || !password) {
+        alert('답글 내용과 비밀번호를 입력해주세요.');
+        return;
+    }
+    
+    let name = nameInput.value.trim();
+    if (!name || name === '익명') {
+        const randomId = Math.floor(1000 + Math.random() * 9000);
+        name = `익명(${randomId})`;
+    }
+    
+    const saveBtn = postEl.querySelector('.reply-actions .save');
+    saveBtn.disabled = true;
+    saveBtn.innerText = '등록 중...';
+    
+    try {
+        const { error } = await supabaseClient.from('posts').insert([{
+            name,
+            password,
+            message,
+            parent_id: parentId
+        }]);
+        
+        if (error) throw error;
+        
+        loadPosts(); // Refresh list
+    } catch (err) {
+        console.error('Reply submission error:', err);
+        alert('답글 등록 중 오류가 발생했습니다.');
+    } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerText = '답글 등록';
+    }
+};
+
 // Keep initBoard for loading posts
 function initBoard() {
     const form = document.getElementById('board-form');
@@ -609,42 +696,65 @@ function renderPosts(posts) {
         container.innerHTML = '<div class="no-posts">아직 등록된 글이 없습니다. 첫 글을 남겨주세요!</div>';
         return;
     }
+
+    // 1단계 하이어라키 재구성 (부모글과 답글 분리)
+    const parents = posts.filter(p => !p.parent_id);
+    const children = posts.filter(p => p.parent_id);
     
-    posts.forEach(post => {
-        const date = new Date(post.timestamp);
-        const formattedDate = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+    // 부모글은 최신순, 답글은 과거순(오래된것이 위)으로 정렬
+    parents.forEach(post => {
+        renderSinglePost(container, post, false);
         
-        const el = document.createElement('div');
-        el.className = 'board-post'; 
-        el.setAttribute('data-id', post.id);
-        el.innerHTML = `
-            <div class="post-header">
-                <div class="post-header-left">
-                    <span class="post-name">${escapeHtml(post.name)}</span>
-                    <span class="post-time">${formattedDate}</span>
-                </div>
-                <div class="post-actions">
-                    <button class="btn-post-action edit" onclick="editPost('${post.id}')" title="수정">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    </button>
-                    <button class="btn-post-action delete" onclick="deletePost('${post.id}')" title="삭제">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                    </button>
-                </div>
-            </div>
-            <div class="post-body">
-                ${escapeHtml(post.message).replace(/\n/g, '<br>')}
-            </div>
-            <div class="post-edit-wrap">
-                <textarea class="post-edit-input">${escapeHtml(post.message)}</textarea>
-                <div class="post-edit-actions">
-                    <button class="btn-post-action cancel" onclick="cancelEdit('${post.id}')">취소</button>
-                    <button class="btn-post-action save" onclick="saveEdit('${post.id}')">저장</button>
-                </div>
-            </div>
-        `;
-        container.appendChild(el);
+        // 해당 부모의 답글들을 찾아 렌더링
+        const postReplies = children
+            .filter(c => c.parent_id === post.id)
+            .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            
+        postReplies.forEach(reply => {
+            renderSinglePost(container, reply, true);
+        });
     });
+}
+
+function renderSinglePost(container, post, isReply) {
+    const date = new Date(post.timestamp);
+    const formattedDate = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+    
+    const el = document.createElement('div');
+    el.className = `board-post ${isReply ? 'reply' : ''}`; 
+    el.setAttribute('data-id', post.id);
+    el.innerHTML = `
+        <div class="post-header">
+            <div class="post-header-left">
+                <span class="post-name">${escapeHtml(post.name)}</span>
+                <span class="post-time">${formattedDate}</span>
+            </div>
+            <div class="post-actions">
+                ${!isReply ? `
+                <button class="btn-post-action reply" onclick="showReplyForm('${post.id}')" title="답글">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </button>
+                ` : ''}
+                <button class="btn-post-action edit" onclick="editPost('${post.id}')" title="수정">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+                <button class="btn-post-action delete" onclick="deletePost('${post.id}')" title="삭제">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+            </div>
+        </div>
+        <div class="post-body">
+            ${escapeHtml(post.message).replace(/\n/g, '<br>')}
+        </div>
+        <div class="post-edit-wrap">
+            <textarea class="post-edit-input">${escapeHtml(post.message)}</textarea>
+            <div class="post-edit-actions">
+                <button class="btn-post-action cancel" onclick="cancelEdit('${post.id}')">취소</button>
+                <button class="btn-post-action save" onclick="saveEdit('${post.id}')">저장</button>
+            </div>
+        </div>
+    `;
+    container.appendChild(el);
 }
 
 // Post Action Functions
