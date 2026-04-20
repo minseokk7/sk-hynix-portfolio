@@ -546,7 +546,7 @@ async function asyncBoardSubmission() {
 
 // Reply Modal Logic
 window.openReplyModal = function(parentId) {
-    const modal = document.getElementById('reply-modal');
+    const modal = document.getElementById('hynix-reply-modal');
     const parentInput = document.getElementById('reply-parent-id');
     if (!modal || !parentInput) return;
     
@@ -562,7 +562,7 @@ window.openReplyModal = function(parentId) {
 };
 
 window.closeReplyModal = function() {
-    const modal = document.getElementById('reply-modal');
+    const modal = document.getElementById('hynix-reply-modal');
     if (modal) modal.classList.remove('active');
 };
 
