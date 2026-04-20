@@ -26,9 +26,22 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Inject Secrets
+        env:
+          SB_URL: ${{ secrets.SUPABASE_URL }}
+          SB_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
-          sed -i "s|__SUPABASE_URL__|${{ secrets.SUPABASE_URL }}|g" script.js
-          sed -i "s|__SUPABASE_ANON_KEY__|${{ secrets.SUPABASE_ANON_KEY }}|g" script.js
+          # Normalize line endings to LF to prevent sed issues on Linux
+          sed -i 's/\r//' script.js
+          
+          # Use safer sed with environment variables
+          sed -i "s|__SUPABASE_URL__|$SB_URL|g" script.js
+          sed -i "s|__SUPABASE_ANON_KEY__|$SB_KEY|g" script.js
+          
+          # Verification (Silent check)
+          if grep -q "__SUPABASE_URL__" script.js; then
+            echo "::error::Injection failed! Placeholder still exists."
+            exit 1
+          fi
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
