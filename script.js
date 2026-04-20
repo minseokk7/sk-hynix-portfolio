@@ -373,6 +373,30 @@ window.closePostModal = function() {
     if (modal) modal.classList.remove('active');
 };
 
+window.toggleLike = async function(postId) {
+    if (!supabaseClient) return;
+    try {
+        const likedKey = `liked_${postId}`;
+        if (localStorage.getItem(likedKey)) {
+            alert('이미 추천하셨습니다!');
+            return;
+        }
+
+        // Fetch current likes
+        const { data, error: fetchError } = await supabaseClient.from('posts').select('likes').eq('id', postId).single();
+        if (fetchError) throw fetchError;
+
+        const newLikes = (data.likes || 0) + 1;
+        const { error: updateError } = await supabaseClient.from('posts').update({ likes: newLikes }).eq('id', postId);
+        if (updateError) throw updateError;
+
+        localStorage.setItem(likedKey, 'true');
+        await loadPosts();
+    } catch (err) {
+        console.error('Like error:', err);
+    }
+};
+
 window.submitPost = async function() {
     if (!supabaseClient) {
         if (!initSupabaseClient()) {
@@ -486,6 +510,10 @@ function renderSinglePost(container, post, isReply, replies = []) {
             <div class="post-header-left"><span class="post-name">${escapeHtml(post.name)}</span><span class="post-time">${formattedDate}</span></div>
             <div class="post-actions">
                 ${!isReply ? `
+                <button class="btn-post-action like" onclick="toggleLike('${post.id}')" title="추천">
+                    <span class="like-count">${post.likes || 0}</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="heart-icon"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                </button>
                 <button class="btn-post-action reply-toggle" onclick="${replies.length > 0 ? `toggleReplies('${post.id}')` : `openPostModal('${post.id}')`}">
                     <span class="reply-count">${replies.length}</span>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
