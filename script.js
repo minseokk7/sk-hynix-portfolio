@@ -363,62 +363,69 @@ try {
 }
 
 // Global handler for board submission to prevent refresh reliably
-window.handleBoardSubmit = async function(event) {
-    if (event) event.preventDefault();
-    console.log('handleBoardSubmit triggered');
-
-    const submitBtn = document.querySelector('#board-form button[type="submit"]');
-    const nameInput = document.getElementById('board-name');
-    const passwordInput = document.getElementById('board-password');
-    const messageInput = document.getElementById('board-message');
-    
-    if (!messageInput || !passwordInput) {
-        alert('입력 필드를 찾을 수 없습니다.');
-        return false;
-    }
-
-    const message = messageInput.value.trim();
-    const password = passwordInput.value.trim();
-    const name = nameInput.value.trim() || '익명';
-
-    if (!message || !password) {
-        alert('메시지와 비밀번호를 모두 입력해주세요.');
-        return false;
-    }
-
-    if (!supabase) {
-        alert('Supabase 라이브러리 로드에 실패했습니다. 인터넷 연결이나 차단 설정을 확인해주세요.');
-        return false;
-    }
-
-    // UI Loading State
-    if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span>등록 중...</span><div class="loader"></div>';
-    }
-
-    const newPost = {
-        name: name,
-        password: password,
-        message: message
-    };
-
-    console.log('Saving post to Supabase:', newPost);
-    const success = await savePost(newPost);
-    
-    if (success) {
-        // Form reset
-        if (nameInput) nameInput.value = '';
-        if (passwordInput) passwordInput.value = '';
-        if (messageInput) messageInput.value = '';
-    }
-
-    if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<span>게시글 등록하기</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>';
+window.handleBoardSubmit = function(event) {
+    // 1. IMPROVED: Immediate and unconditional prevention
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
     }
     
-    return false;
+    console.log('Board submission intercepted successfully. Starting async processing...');
+
+    // Use an IIFE or localized async logic to handle the promise without returning it to the event caller
+    (async () => {
+        const submitBtn = document.querySelector('#board-form button[type="submit"]');
+        const nameInput = document.getElementById('board-name');
+        const passwordInput = document.getElementById('board-password');
+        const messageInput = document.getElementById('board-message');
+        
+        if (!messageInput || !passwordInput) {
+            console.error('Required input fields not found in DOM.');
+            return;
+        }
+
+        const message = messageInput.value.trim();
+        const password = passwordInput.value.trim();
+        const name = nameInput.value.trim() || '익명';
+
+        if (!message || !password) {
+            alert('메시지와 비밀번호를 모두 입력해주세요.');
+            return;
+        }
+
+        if (!supabase) {
+            alert('Supabase가 초기화되지 않았습니다. API 키 설정을 확인하거나 잠시 후 다시 시도해주세요.');
+            return;
+        }
+
+        // UI Loading State
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span>등록 중...</span><div class="loader"></div>';
+        }
+
+        try {
+            const newPost = { name, password, message };
+            console.log('Pushing data to Supabase:', newPost);
+            const success = await savePost(newPost);
+            
+            if (success) {
+                if (nameInput) nameInput.value = '';
+                if (passwordInput) passwordInput.value = '';
+                if (messageInput) messageInput.value = '';
+                console.log('Post saved successfully.');
+            }
+        } catch (err) {
+            console.error('Post submission failed:', err);
+        } finally {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span>게시글 등록하기</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>';
+            }
+        }
+    })();
+    
+    return false; // Final fallback for old browsers
 };
 
 // Keep initBoard for loading posts
