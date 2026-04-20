@@ -364,69 +364,74 @@ try {
 
 // Global handler for board submission to prevent refresh reliably
 window.handleBoardSubmit = function(event) {
-    // 1. IMPROVED: Immediate and unconditional prevention
+    // [CRITICAL] 1. IMMEDIATE Sync Prevention
     if (event) {
         event.preventDefault();
         event.stopPropagation();
     }
     
-    console.log('Board submission intercepted successfully. Starting async processing...');
+    console.log('[DEBUG] Board Form Submission Detected (Reload Blocked)');
 
-    // Use an IIFE or localized async logic to handle the promise without returning it to the event caller
-    (async () => {
-        const submitBtn = document.querySelector('#board-form button[type="submit"]');
-        const nameInput = document.getElementById('board-name');
-        const passwordInput = document.getElementById('board-password');
-        const messageInput = document.getElementById('board-message');
-        
-        if (!messageInput || !passwordInput) {
-            console.error('Required input fields not found in DOM.');
-            return;
-        }
-
-        const message = messageInput.value.trim();
-        const password = passwordInput.value.trim();
-        const name = nameInput.value.trim() || '익명';
-
-        if (!message || !password) {
-            alert('메시지와 비밀번호를 모두 입력해주세요.');
-            return;
-        }
-
-        if (!supabase) {
-            alert('Supabase가 초기화되지 않았습니다. API 키 설정을 확인하거나 잠시 후 다시 시도해주세요.');
-            return;
-        }
-
-        // UI Loading State
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span>등록 중...</span><div class="loader"></div>';
-        }
-
-        try {
-            const newPost = { name, password, message };
-            console.log('Pushing data to Supabase:', newPost);
-            const success = await savePost(newPost);
-            
-            if (success) {
-                if (nameInput) nameInput.value = '';
-                if (passwordInput) passwordInput.value = '';
-                if (messageInput) messageInput.value = '';
-                console.log('Post saved successfully.');
-            }
-        } catch (err) {
-            console.error('Post submission failed:', err);
-        } finally {
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<span>게시글 등록하기</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>';
-            }
-        }
-    })();
+    // 2. Perform async business logic separately
+    asyncBoardSubmission();
     
-    return false; // Final fallback for old browsers
+    return false; // Final fallback
 };
+
+async function asyncBoardSubmission() {
+    const submitBtn = document.querySelector('#board-form button[type="submit"]');
+    const nameInput = document.getElementById('board-name');
+    const passwordInput = document.getElementById('board-password');
+    const messageInput = document.getElementById('board-message');
+    
+    if (!messageInput || !passwordInput) {
+        console.error('[DEBUG] Form elements missing from DOM');
+        return;
+    }
+
+    const message = messageInput.value.trim();
+    const password = passwordInput.value.trim();
+    const name = nameInput.value.trim() || '익명';
+
+    if (!message || !password) {
+        alert('메시지와 비밀번호를 모두 입력해주세요.');
+        return;
+    }
+
+    if (!supabase) {
+        console.error('[DEBUG] Supabase client is NULL');
+        alert('Supabase 연결에 실패했습니다. 사이트 개발자(Secret 설정) 확인이 필요합니다.');
+        return;
+    }
+
+    // UI Loading State
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>등록 중...</span><div class="loader"></div>';
+    }
+
+    try {
+        const newPost = { name, password, message };
+        console.log('[DEBUG] Sending payload to Supabase:', newPost);
+        const success = await savePost(newPost);
+        
+        if (success) {
+            if (nameInput) nameInput.value = '';
+            if (passwordInput) passwordInput.value = '';
+            if (messageInput) messageInput.value = '';
+            console.log('[DEBUG] Post saved successfully');
+            loadPosts(); // Refresh list
+        }
+    } catch (err) {
+        console.error('[DEBUG] Async submission error:', err);
+        alert('글 등록 중 시스템 오류가 발생했습니다.');
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<span>게시글 등록하기</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>';
+        }
+    }
+}
 
 // Keep initBoard for loading posts
 function initBoard() {
@@ -452,17 +457,32 @@ async function savePost(post) {
 }
 
 async function loadPosts() {
-    if (!supabase) return;
-    const { data, error } = await supabase
-        .from('posts')
-        .select('*')
-        .order('timestamp', { ascending: false });
-    
-    if (error) {
-        console.error('Error loading posts:', error);
+    console.log('[DEBUG] Loading posts from Supabase...');
+    if (!supabase) {
+        console.warn('[DEBUG] Cannot load posts: Supabase client is missing');
         return;
     }
-    renderPosts(data || []);
+    
+    try {
+        const { data, error } = await supabase
+            .from('posts')
+            .select('*')
+            .order('timestamp', { ascending: false });
+        
+        if (error) {
+            console.error('[DEBUG] Supabase fetch error:', error);
+            if (error.code === 'PGRST116' || error.message.includes('relation "posts" does not exist')) {
+                const container = document.getElementById('board-posts');
+                if (container) container.innerHTML = '<div class="no-posts" style="color:var(--hynix-red);">[SYSTEM ERROR] DB 테이블이 생성되지 않았습니다. 가이드의 SQL을 실행해주세요!</div>';
+            }
+            return;
+        }
+        
+        console.log('[DEBUG] Posts loaded successfully:', data.length);
+        renderPosts(data || []);
+    } catch (e) {
+        console.error('[DEBUG] Unexpected loading error:', e);
+    }
 }
 
 function renderPosts(posts) {
