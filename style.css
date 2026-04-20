@@ -1686,8 +1686,22 @@ body {
     font-weight: bold;
 }
 
-.btn-post-action.reply {
+.btn-post-action.reply-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     color: var(--hynix-orange);
+    font-weight: 700;
+}
+
+.reply-count {
+    font-size: 0.85rem;
+}
+
+.replies-wrapper {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
 }
 
 .reply-form-container {

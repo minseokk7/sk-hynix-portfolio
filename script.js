@@ -545,44 +545,34 @@ async function asyncBoardSubmission() {
 }
 
 // Reply Submission Logic
-window.showReplyForm = function(parentId) {
-    // Hide any other active reply forms first
-    document.querySelectorAll('.reply-form-container').forEach(form => {
-        form.classList.remove('active');
-    });
-    
+// Toggle Replies and Form
+window.toggleReplies = function(parentId) {
     const postEl = document.querySelector(`.board-post[data-id="${parentId}"]`);
     if (!postEl) return;
     
-    let replyForm = postEl.querySelector('.reply-form-container');
-    if (!replyForm) {
-        // Create reply form if it doesn't exist
-        replyForm = document.createElement('div');
-        replyForm.className = 'reply-form-container';
-        replyForm.innerHTML = `
-            <div class="reply-form-grid">
-                <input type="text" class="reply-name" placeholder="닉네임 (익명)" maxlength="10">
-                <input type="password" class="reply-password" placeholder="비밀번호 4자리" maxlength="4">
-            </div>
-            <textarea class="reply-textarea" placeholder="답글 내용을 입력하세요..."></textarea>
-            <div class="reply-actions">
-                <button class="btn-post-action cancel" onclick="cancelReply('${parentId}')">취소</button>
-                <button class="btn-post-action save" onclick="submitReply('${parentId}')">답글 등록</button>
-            </div>
-        `;
-        postEl.appendChild(replyForm);
-    }
+    // Toggle the replies thread and form container
+    const wrapper = postEl.querySelector('.replies-wrapper');
+    const replyForm = postEl.querySelector('.reply-form-container');
     
-    replyForm.classList.add('active');
-    replyForm.querySelector('.reply-textarea').focus();
+    if (wrapper.style.display === 'block') {
+        wrapper.style.display = 'none';
+        replyForm.classList.remove('active');
+    } else {
+        wrapper.style.display = 'block';
+        replyForm.classList.add('active');
+        replyForm.querySelector('.reply-textarea').focus();
+    }
 };
 
 window.cancelReply = function(parentId) {
     const postEl = document.querySelector(`.board-post[data-id="${parentId}"]`);
+    const wrapper = postEl?.querySelector('.replies-wrapper');
     const replyForm = postEl?.querySelector('.reply-form-container');
+    
     if (replyForm) {
         replyForm.classList.remove('active');
         replyForm.querySelector('.reply-textarea').value = '';
+        if (wrapper) wrapper.style.display = 'none';
     }
 };
 
@@ -703,26 +693,55 @@ function renderPosts(posts) {
     
     // 부모글은 최신순, 답글은 과거순(오래된것이 위)으로 정렬
     parents.forEach(post => {
-        renderSinglePost(container, post, false);
-        
-        // 해당 부모의 답글들을 찾아 렌더링
         const postReplies = children
             .filter(c => c.parent_id === post.id)
             .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
             
-        postReplies.forEach(reply => {
-            renderSinglePost(container, reply, true);
-        });
+        renderSinglePost(container, post, false, postReplies);
     });
 }
 
-function renderSinglePost(container, post, isReply) {
+function renderSinglePost(container, post, isReply, replies = []) {
     const date = new Date(post.timestamp);
     const formattedDate = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
     
     const el = document.createElement('div');
-    el.className = `board-post ${isReply ? 'reply' : ''}`; 
+    el.className = `board-post ${isReply ? 'reply' : 'parent'}`; 
     el.setAttribute('data-id', post.id);
+    
+    let repliesHtml = '';
+    if (!isReply && replies.length > 0) {
+        repliesHtml = `
+            <div class="replies-wrapper" style="display: none;">
+                ${replies.map(reply => {
+                    const rDate = new Date(reply.timestamp);
+                    const rFormattedDate = `${rDate.getFullYear()}.${String(rDate.getMonth() + 1).padStart(2, '0')}.${String(rDate.getDate()).padStart(2, '0')} ${String(rDate.getHours()).padStart(2, '0')}:${String(rDate.getMinutes()).padStart(2, '0')}`;
+                    return `
+                        <div class="board-post reply" data-id="${reply.id}">
+                            <div class="post-header">
+                                <div class="post-header-left">
+                                    <span class="post-name">${escapeHtml(reply.name)}</span>
+                                    <span class="post-time">${rFormattedDate}</span>
+                                </div>
+                                <div class="post-actions">
+                                    <button class="btn-post-action edit" onclick="editPost('${reply.id}')" title="수정">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                    </button>
+                                    <button class="btn-post-action delete" onclick="deletePost('${reply.id}')" title="삭제">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="post-body">
+                                ${escapeHtml(reply.message).replace(/\n/g, '<br>')}
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+    }
+
     el.innerHTML = `
         <div class="post-header">
             <div class="post-header-left">
@@ -731,7 +750,8 @@ function renderSinglePost(container, post, isReply) {
             </div>
             <div class="post-actions">
                 ${!isReply ? `
-                <button class="btn-post-action reply" onclick="showReplyForm('${post.id}')" title="답글">
+                <button class="btn-post-action reply-toggle" onclick="toggleReplies('${post.id}')" title="댓글 보기/작성">
+                    <span class="reply-count">${replies.length}</span>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 </button>
                 ` : ''}
@@ -746,6 +766,7 @@ function renderSinglePost(container, post, isReply) {
         <div class="post-body">
             ${escapeHtml(post.message).replace(/\n/g, '<br>')}
         </div>
+        
         <div class="post-edit-wrap">
             <textarea class="post-edit-input">${escapeHtml(post.message)}</textarea>
             <div class="post-edit-actions">
@@ -753,6 +774,22 @@ function renderSinglePost(container, post, isReply) {
                 <button class="btn-post-action save" onclick="saveEdit('${post.id}')">저장</button>
             </div>
         </div>
+
+        ${!isReply ? `
+        <div class="reply-form-container">
+            <div class="reply-form-grid">
+                <input type="text" class="reply-name" placeholder="닉네임 (익명)" maxlength="10">
+                <input type="password" class="reply-password" placeholder="비밀번호 4자리" maxlength="4">
+            </div>
+            <textarea class="reply-textarea" placeholder="답글 내용을 입력하세요..."></textarea>
+            <div class="reply-actions">
+                <button class="btn-post-action cancel" onclick="cancelReply('${post.id}')">취소</button>
+                <button class="btn-post-action save" onclick="submitReply('${post.id}')">답글 등록</button>
+            </div>
+        </div>
+        ` : ''}
+
+        ${repliesHtml}
     `;
     container.appendChild(el);
 }
