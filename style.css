@@ -1224,9 +1224,28 @@ body {
 .board-input-area, .board-list-area {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: var(--shadow-sm);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s var(--ease-out-expo);
+    position: relative;
+    overflow: hidden;
+}
+
+.board-input-area:hover, .board-list-area:hover {
+    border-color: rgba(230, 0, 18, 0.2);
+    box-shadow: var(--shadow-lg);
+}
+
+.board-input-area::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--hynix-red), var(--hynix-orange));
+    opacity: 0.8;
 }
 
 .board-input-area h3, .board-list-area h3 {
@@ -1278,16 +1297,19 @@ body {
 }
 
 .board-post {
-    padding: 1.25rem;
+    padding: 1.5rem;
     border: 1px solid var(--border-color);
-    border-radius: 12px;
-    background: var(--bg-primary);
-    transition: transform 0.3s ease;
+    border-radius: 16px;
+    background: var(--bg-secondary);
+    transition: all 0.3s var(--ease-out-expo);
+    position: relative;
 }
 
 .board-post:hover {
-    transform: translateX(4px);
-    border-color: rgba(230,0,18,0.3);
+    transform: translateY(-2px);
+    border-color: rgba(230,0,18,0.25);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-sm);
 }
 
 .post-header {
@@ -1347,29 +1369,59 @@ body {
     margin-bottom: 0.5rem;
 }
 
+.post-edit-wrap {
+    display: none;
+    margin-top: 1rem;
+    animation: fadeIn 0.3s ease;
+}
+
 .post-edit-input {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     border: 1px solid var(--hynix-orange);
-    border-radius: 6px;
+    border-radius: 10px;
     background: var(--bg-primary);
     color: var(--text-primary);
     font-family: inherit;
-    font-size: 0.95rem;
-    margin-bottom: 0.5rem;
-    display: none;
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+    resize: vertical;
 }
 
 .post-edit-actions {
-    display: none;
+    display: flex;
     gap: 8px;
     justify-content: flex-end;
 }
 
-.board-post.editing .post-body { display: none; }
-.board-post.editing .post-edit-input { display: block; }
-.board-post.editing .post-edit-actions { display: flex; }
-.board-post.editing .post-actions { display: none; }
+.board-post.editing .post-body,
+.board-post.editing .post-actions {
+    display: none;
+}
+
+.board-post.editing .post-edit-wrap {
+    display: block;
+}
+
+/* Loader Animation */
+.loader {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid #ffffff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
 .no-posts {
     text-align: center;

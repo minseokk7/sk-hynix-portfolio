@@ -345,17 +345,18 @@ function initGlitchEffect() {
 /* ===================================
    자유게시판 (Free Board - Supabase Backend)
    =================================== */
-const SUPABASE_URL = 'https://pfvngqhwppxykwfyyvdw.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_f4FS8kUDV7pPtdO21eFZBQ_uKVMLCmy';
+/* --- Supabase Configuration (Injected during deployment) --- */
+const SUPABASE_URL = '__SUPABASE_URL__';
+const SUPABASE_ANON_KEY = '__SUPABASE_ANON_KEY__';
 
 // Robust client initialization
 let supabase = null;
 try {
-    const supabaseLib = window.supabase || window.Supabase;
-    if (supabaseLib) {
+    const supabaseLib = window.supabase || (window.Supabase ? window.Supabase.supabase : null) || window.Supabase;
+    if (supabaseLib && typeof supabaseLib.createClient === 'function' && SUPABASE_URL !== '__SUPABASE_URL__') {
         supabase = supabaseLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    } else {
-        console.error('Supabase library not found. Check if the CDN script is loaded.');
+    } else if (SUPABASE_URL === '__SUPABASE_URL__') {
+        console.warn('Supabase placeholders not replaced. Development mode or local use requires manual key entry.');
     }
 } catch (e) {
     console.error('Supabase initialization error:', e);
@@ -366,6 +367,7 @@ window.handleBoardSubmit = async function(event) {
     if (event) event.preventDefault();
     console.log('handleBoardSubmit triggered');
 
+    const submitBtn = document.querySelector('#board-form button[type="submit"]');
     const nameInput = document.getElementById('board-name');
     const passwordInput = document.getElementById('board-password');
     const messageInput = document.getElementById('board-message');
@@ -375,17 +377,13 @@ window.handleBoardSubmit = async function(event) {
         return false;
     }
 
-    if (!messageInput.value.trim() || !passwordInput.value.trim()) {
+    const message = messageInput.value.trim();
+    const password = passwordInput.value.trim();
+    const name = nameInput.value.trim() || '익명';
+
+    if (!message || !password) {
         alert('메시지와 비밀번호를 모두 입력해주세요.');
         return false;
-    }
-
-    if (!supabase) {
-        // Try one last time to init
-        const supabaseLib = window.supabase || window.Supabase;
-        if (supabaseLib) {
-            supabase = supabaseLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        }
     }
 
     if (!supabase) {
@@ -393,21 +391,32 @@ window.handleBoardSubmit = async function(event) {
         return false;
     }
 
+    // UI Loading State
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>등록 중...</span><div class="loader"></div>';
+    }
+
     const newPost = {
-        id: Date.now().toString(),
-        name: nameInput.value.trim() || '익명',
-        password: passwordInput.value.trim(),
-        message: messageInput.value.trim(),
-        timestamp: new Date().toISOString()
+        name: name,
+        password: password,
+        message: message
     };
 
     console.log('Saving post to Supabase:', newPost);
-    savePost(newPost);
+    const success = await savePost(newPost);
     
-    // Form reset
-    if (nameInput) nameInput.value = '';
-    if (passwordInput) passwordInput.value = '';
-    if (messageInput) messageInput.value = '';
+    if (success) {
+        // Form reset
+        if (nameInput) nameInput.value = '';
+        if (passwordInput) passwordInput.value = '';
+        if (messageInput) messageInput.value = '';
+    }
+
+    if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>게시글 등록하기</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>';
+    }
     
     return false;
 };
@@ -420,14 +429,15 @@ function initBoard() {
 }
 
 async function savePost(post) {
-    if (!supabase) return;
+    if (!supabase) return false;
     const { error } = await supabase.from('posts').insert([post]);
     if (error) {
         console.error('Error saving post:', error);
-        alert('게시글 저장 중 오류가 발생했습니다.');
-        return;
+        alert('게시글 저장 중 오류가 발생했습니다: ' + error.message);
+        return false;
     }
-    loadPosts();
+    await loadPosts();
+    return true;
 }
 
 async function loadPosts() {
@@ -463,7 +473,7 @@ function renderPosts(posts) {
         const formattedDate = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
         
         const el = document.createElement('div');
-        el.className = 'board-post reveal visible'; 
+        el.className = 'board-post'; 
         el.setAttribute('data-id', post.id);
         el.innerHTML = `
             <div class="post-header">
@@ -472,17 +482,23 @@ function renderPosts(posts) {
                     <span class="post-time">${formattedDate}</span>
                 </div>
                 <div class="post-actions">
-                    <button class="btn-post-action edit" onclick="editPost('${post.id}')">수정</button>
-                    <button class="btn-post-action delete" onclick="deletePost('${post.id}')">삭제</button>
+                    <button class="btn-post-action edit" onclick="editPost('${post.id}')" title="수정">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button class="btn-post-action delete" onclick="deletePost('${post.id}')" title="삭제">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
                 </div>
             </div>
             <div class="post-body">
-                ${escapeHtml(post.message).replace(/\\n/g, '<br>')}
+                ${escapeHtml(post.message).replace(/\n/g, '<br>')}
             </div>
-            <textarea class="post-edit-input">${escapeHtml(post.message)}</textarea>
-            <div class="post-edit-actions">
-                <button class="btn-post-action" onclick="cancelEdit('${post.id}')">취소</button>
-                <button class="btn-post-action edit" style="color:var(--hynix-orange);" onclick="saveEdit('${post.id}')">저장</button>
+            <div class="post-edit-wrap">
+                <textarea class="post-edit-input">${escapeHtml(post.message)}</textarea>
+                <div class="post-edit-actions">
+                    <button class="btn-post-action cancel" onclick="cancelEdit('${post.id}')">취소</button>
+                    <button class="btn-post-action save" onclick="saveEdit('${post.id}')">저장</button>
+                </div>
             </div>
         `;
         container.appendChild(el);
