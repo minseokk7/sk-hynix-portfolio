@@ -5,12 +5,23 @@
  */
 
 /* ===================================
-   데이터베이스 초기화 (Supabase)
+   데이터베이스 엔진 (Supabase)
    GitHub Actions가 상단에 URL과 KEY를 주입합니다.
    =================================== */
-const supabaseClient = (typeof supabase !== 'undefined' && typeof SUPABASE_URL !== 'undefined') 
-    ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) 
-    : null;
+let supabaseClient = null;
+
+function initSupabaseClient() {
+    try {
+        if (typeof supabase !== 'undefined' && typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL.startsWith('http')) {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('[DEBUG] Supabase client initialized successfully.');
+            return true;
+        }
+    } catch (e) {
+        console.error('[DEBUG] Supabase init error:', e);
+    }
+    return false;
+}
 
 /* ===================================
    설정값 (Configuration)
@@ -363,7 +374,12 @@ window.closePostModal = function() {
 };
 
 window.submitPost = async function() {
-    if (!supabaseClient) return;
+    if (!supabaseClient) {
+        if (!initSupabaseClient()) {
+            alert('데이터베이스 연결에 실패했습니다. 잠시 후 다시 시도해주세요.');
+            return;
+        }
+    }
     const parentId = document.getElementById('post-parent-id').value;
     const nameInput = document.getElementById('post-name');
     const passwordInput = document.getElementById('post-password');
@@ -409,7 +425,9 @@ window.toggleReplies = function(parentId) {
    게시판 엔진 (Database Interface)
    =================================== */
 async function loadPosts() {
-    if (!supabaseClient) return;
+    if (!supabaseClient) {
+        if (!initSupabaseClient()) return;
+    }
     try {
         const { data, error } = await supabaseClient.from('posts').select('*').order('timestamp', { ascending: false });
         if (error) throw error;
@@ -541,7 +559,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initModalBackdropClose();
     initTerminalTyping();
     initRadarChart();
-    if (typeof initSupabase === 'function') {
-        initSupabase().then(() => loadPosts());
-    } else { loadPosts(); }
+    initSupabaseClient();
+    loadPosts();
 });
