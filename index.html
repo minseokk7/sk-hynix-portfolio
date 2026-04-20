@@ -649,12 +649,12 @@
         </div>
     </footer>
 
-    <!-- Hynix Reply Modal (v1.1.8) -->
-    <div id="hynix-reply-modal" class="hynix-modal-backdrop">
-        <div class="hynix-modal-card">
+    <!-- Unified Reply Modal (v1.1.9) -->
+    <div id="hynix-reply-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeReplyModal()">&times;</button>
             <div class="modal-header">
                 <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px; vertical-align:middle;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>답글 남기기</h3>
-                <button class="close-modal" onclick="closeReplyModal()">&times;</button>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="reply-parent-id">
@@ -673,14 +673,14 @@
                     <textarea id="reply-message" class="reply-textarea" placeholder="답글 내용을 입력하세요..." rows="4"></textarea>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn-post-action cancel" onclick="closeReplyModal()">취소</button>
-                <button id="reply-submit-btn" class="btn-post-action save" onclick="submitReply()">답글 등록</button>
+            <div class="modal-footer" style="padding-top: 1rem; border-top: 1px solid var(--border-color); margin-top: 2rem; display: flex; justify-content: flex-end; gap: 10px;">
+                <button class="btn-post-action cancel" onclick="closeReplyModal()" style="padding: 10px 20px; border-radius: 12px; font-weight: 600; background: var(--bg-secondary); border: 1px solid var(--border-color);">취소</button>
+                <button id="reply-submit-btn" class="btn-post-action save" onclick="submitReply()" style="padding: 10px 20px; border-radius: 12px; font-weight: 600; background: var(--hynix-red); color: white; border: none;">답글 등록</button>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script.js?v=1.1.8"></script>
+    <script src="script.js?v=1.1.9"></script>
 </body>
 </html>

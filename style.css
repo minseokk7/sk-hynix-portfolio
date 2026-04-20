@@ -1704,60 +1704,7 @@ body {
     border-top: 1px solid var(--border-color);
 }
 
-/* --- Hynix Global Modal System (v1.1.8) --- */
-.hynix-modal-backdrop {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    display: none !important;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999 !important;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
 
-.hynix-modal-backdrop.active {
-    display: flex !important;
-    opacity: 1;
-}
-
-.hynix-modal-card {
-    background: var(--bg-primary);
-    border: 1px solid var(--border-color);
-    border-radius: 28px;
-    padding: 2.5rem;
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
-    position: relative;
-    max-width: 520px;
-    width: 92%;
-    max-height: 90vh;
-    overflow-y: auto;
-    transform: translateY(40px);
-    transition: transform 0.4s var(--ease-out-expo);
-}
-
-.hynix-modal-backdrop.active .hynix-modal-card {
-    transform: translateY(0);
-}
-
-.modal-label {
-    display: block;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    margin-bottom: 0.5rem;
-    margin-top: 1rem;
-}
-
-#hynix-reply-modal .modal-body {
-    padding-top: 0;
-}
 
 .reply-form-grid {
     display: grid;
