@@ -1747,6 +1747,9 @@ body {
 /* --- Hynix Premium Form System (v1.2.0) --- */
 .hynix-form-container {
     display: grid;
+/* --- Premium Design System Tokens (v1.3.1) --- */
+.hynix-form-container {
+    display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
     margin-top: 1rem;
@@ -1763,80 +1766,121 @@ body {
 }
 
 .hynix-label {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     font-weight: 700;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding-left: 4px;
+    color: var(--text-primary);
+    padding-left: 2px;
 }
 
 .hynix-input, .hynix-textarea {
     width: 100%;
-    padding: 12px 16px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
+    padding: 14px 20px;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 15px;
     font-family: inherit;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: var(--text-primary);
     transition: all 0.3s var(--ease-out-expo);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
 }
 
 .hynix-input:focus, .hynix-textarea:focus {
     outline: none;
     border-color: var(--hynix-red);
-    background: var(--bg-primary);
+    background: #fff;
     box-shadow: 0 0 0 4px var(--hynix-red-soft), var(--shadow-sm);
     transform: translateY(-1px);
 }
 
 .hynix-textarea {
     resize: vertical;
-    min-height: 120px;
+    min-height: 140px;
     line-height: 1.6;
 }
 
 
-/* --- Board Unified UI (v1.3.0) --- */
+/* --- Board Unified UI (v1.3.1) --- */
+.section-header.centered {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.communication-tag {
+    background: #eefdf5;
+    color: #10b981;
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+}
+
+.board-card {
+    background: #fff;
+    border-radius: 30px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.03);
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
 .board-header-flex {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
     padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.board-header-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.board-count {
+    background: #fff0f0;
+    color: var(--hynix-red);
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.85rem;
+    font-weight: 800;
 }
 
 .btn-add-post {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
+    gap: 10px;
+    padding: 12px 28px;
     background: var(--hynix-red);
     color: white;
     border: none;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 0.9rem;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 1rem;
     cursor: pointer;
-    transition: all 0.3s var(--ease-out-expo);
-    box-shadow: 0 4px 15px rgba(230, 0, 18, 0.2);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 8px 25px rgba(230, 0, 18, 0.25);
+}
+
+.btn-add-post .btn-icon {
+    font-size: 1.3rem;
+    line-height: 1;
 }
 
 .btn-add-post:hover {
-    background: #c2000f;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(230, 0, 18, 0.3);
-}
-
-.btn-add-post svg {
-    transition: transform 0.3s ease;
-}
-
-.btn-add-post:hover svg {
-    transform: rotate(90deg);
+    background: #d40011;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 35px rgba(230, 0, 18, 0.35);
 }
 
 @media (max-width: 600px) {
