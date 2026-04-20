@@ -1,6 +1,6 @@
 /**
  * SK 하이닉스 포트폴리오 — 메인 스크립트
- * v1.0.1 - Supabase & Board Fix
+ * v1.3.0 - Unified Modal System
  * 파티클 애니메이션, 스크롤 효과, 모달, 타이핑 효과 등을 관리합니다.
  */
 
@@ -8,24 +8,17 @@
    설정값 (Configuration)
    =================================== */
 const CONFIG = {
-    /** 파티클 효과 설정 */
     particles: {
         count: 30,
         colors: ['#E60012', '#FF6B35', '#ffffff'],
         sizeRange: [1, 3],
         durationRange: [6, 14],
     },
-    /** 네비게이션 스크롤 감지 임계값 (px) */
     navScrollThreshold: 50,
-    /** 히어로 파라락스 강도 */
     parallaxIntensity: 0.3,
-    /** 숫자 카운트업 애니메이션 지속 시간 (ms) */
     counterDuration: 2000,
-    /** 스크롤 IntersectionObserver 임계값 */
     revealThreshold: 0.15,
-    /** 타이핑 효과 속도 (ms) */
     typingSpeed: 30,
-    /** 터미널 출력 텍스트 */
     terminalText: '본 포트폴리오는 수작업이 아닌, 명확한 설계 의도(Logic of Intent)를 바탕으로 AI 에이전트(Antigravity)를 지휘하는 Vibe Coding 기법으로 구축되었습니다. 이러한 시스템 아키텍트 역량과 AppSheet, Gemini API 실습 경험을 결합하여, 입사 후 반도체 장비의 에러 로그나 점검 데이터를 자동화 시스템으로 연동시켜 업무 효율을 극대화하는 하이브리드 DT 엔지니어 장민석이 되겠습니다.',
 };
 
@@ -69,20 +62,15 @@ function initHeroEffects() {
     
     window.addEventListener('scroll', () => {
         const scrolled = window.scrollY;
-        
-        /** 네비게이션 바 상태 변화 */
         if (navbar) {
             navbar.classList.toggle('scrolled', scrolled > CONFIG.navScrollThreshold);
         }
-        
-        /** 히어로 파라락스 효과 */
         if (heroBg) {
             heroBg.style.transform = `translateY(${scrolled * CONFIG.parallaxIntensity}px)`;
         }
     });
 }
 
-/** 히어로 타이틀 타이핑 효과 */
 function initHeroTyping() {
     const titleEl = document.getElementById('hero-typing-target');
     if (!titleEl) return;
@@ -95,15 +83,12 @@ function initHeroTyping() {
         if (index < text.length) {
             titleEl.textContent += text.charAt(index);
             index++;
-            setTimeout(type, 100); // 히어로 타이핑은 조금 더 천천히
+            setTimeout(type, 100);
         }
     }
-    
-    /** 약간의 지연 후 시작 */
     setTimeout(type, 500);
 }
 
-/** 현재 보이는 섹션에 맞춰 네비게이션 링크 활성화 */
 function initActiveNavLink() {
     const sections = document.querySelectorAll('section[id]');
     const navLinks = document.querySelectorAll('.nav-link');
@@ -122,13 +107,9 @@ function initActiveNavLink() {
         },
         { threshold: 0.3 }
     );
-
     sections.forEach((section) => observer.observe(section));
 }
 
-/* ===================================
-   모바일 메뉴 토글
-   =================================== */
 function initMobileMenu() {
     const toggle = document.getElementById('mobile-toggle');
     const navLinks = document.querySelector('.nav-links');
@@ -136,12 +117,8 @@ function initMobileMenu() {
 
     toggle.addEventListener('click', () => {
         navLinks.classList.toggle('open');
-
-        /** 햄버거 → X 아이콘 토글 */
         const spans = toggle.querySelectorAll('span');
         const isOpen = navLinks.classList.contains('open');
-        toggle.setAttribute('aria-label', isOpen ? '메뉴 닫기' : '메뉴 열기');
-
         if (isOpen) {
             spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
             spans[1].style.opacity = '0';
@@ -153,7 +130,6 @@ function initMobileMenu() {
         }
     });
 
-    /** 메뉴 항목 클릭 시 모바일 메뉴 자동 닫기 */
     navLinks.querySelectorAll('.nav-link').forEach((link) => {
         link.addEventListener('click', () => {
             navLinks.classList.remove('open');
@@ -186,7 +162,6 @@ function initCounters() {
     if (statsContainer) observer.observe(statsContainer);
 }
 
-/** 개별 카운터 애니메이션 처리 */
 function animateCounter(counter) {
     const target = parseInt(counter.getAttribute('data-target'), 10);
     const duration = CONFIG.counterDuration;
@@ -195,16 +170,10 @@ function animateCounter(counter) {
     function update(currentTime) {
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
-
-        /** easeOutExpo 이징 함수 적용 */
         const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
         counter.textContent = Math.round(eased * target);
-
-        if (progress < 1) {
-            requestAnimationFrame(update);
-        }
+        if (progress < 1) requestAnimationFrame(update);
     }
-
     requestAnimationFrame(update);
 }
 
@@ -212,11 +181,9 @@ function animateCounter(counter) {
    스크롤 등장(Reveal) 애니메이션
    =================================== */
 function initScrollReveal() {
-    /** 애니메이션 대상 요소에 'reveal' 클래스 부여 */
     const targets = document.querySelectorAll(
         '.dna-card, .project-card, .dt-skill-item, .terminal-window, .pace-item, .contact-content'
     );
-
     targets.forEach((el) => el.classList.add('reveal'));
 
     const observer = new IntersectionObserver(
@@ -230,17 +197,15 @@ function initScrollReveal() {
         },
         { threshold: CONFIG.revealThreshold }
     );
-
     targets.forEach((el) => observer.observe(el));
 }
 
 /* ===================================
-   모달 제어 (STAR-R 프레임워크)
+   공통 모달 제어
    =================================== */
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     if (!modal) return;
-
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 }
@@ -248,12 +213,10 @@ function openModal(modalId) {
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
     if (!modal) return;
-
     modal.classList.remove('active');
     document.body.style.overflow = '';
 }
 
-/** 오버레이 배경 클릭 시 모달 닫기 */
 function initModalBackdropClose() {
     document.querySelectorAll('.modal-overlay').forEach((overlay) => {
         overlay.addEventListener('click', (e) => {
@@ -263,8 +226,6 @@ function initModalBackdropClose() {
             }
         });
     });
-
-    /** ESC 키로 모달 닫기 */
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             document.querySelectorAll('.modal-overlay.active').forEach((modal) => {
@@ -275,16 +236,11 @@ function initModalBackdropClose() {
     });
 }
 
-/* ===================================
-   터미널 타이핑 효과
-   =================================== */
 function initTerminalTyping() {
     const outputTextEl = document.querySelector('.output-text');
     if (!outputTextEl) return;
-
     let hasTyped = false;
     const text = CONFIG.terminalText;
-
     const observer = new IntersectionObserver(
         (entries) => {
             entries.forEach((entry) => {
@@ -296,113 +252,72 @@ function initTerminalTyping() {
         },
         { threshold: 0.3 }
     );
-
     const terminalWindow = document.querySelector('.terminal-window');
     if (terminalWindow) observer.observe(terminalWindow);
 }
 
-/** 한 글자씩 타이핑하는 재귀 함수 */
 function typeText(element, text, index) {
     if (index >= text.length) return;
-
     element.textContent += text.charAt(index);
     setTimeout(() => typeText(element, text, index + 1), CONFIG.typingSpeed);
 }
 
 /* ===================================
-   역량 레이더 차트 (Competency Radar)
+   역량 레이더 차트
    =================================== */
 function initRadarChart() {
     const svg = document.getElementById('competency-radar');
     if (!svg) return;
-
-    const scores = [92, 88, 95, 90, 85]; // [본인 점수]
-    const centerX = 200;
-    const centerY = 200;
-    const maxRadius = 150;
-    const levels = 4; // 축 눈금 개수
-    const axesCount = scores.length;
-
+    const scores = [92, 88, 95, 90, 85];
+    const centerX = 200;  const centerY = 200;  const maxRadius = 150;
+    const levels = 4;  const axesCount = scores.length;
     const gridGroup = svg.querySelector('.chart-grid');
     const axesGroup = svg.querySelector('.chart-axes');
     const poly = document.getElementById('radar-polygon');
     const pointsGroup = svg.querySelector('.chart-points');
 
-    // 1. 그리드 원(눈금) 그리기
     for (let i = 1; i <= levels; i++) {
         const r = (maxRadius / levels) * i;
         const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        circle.setAttribute("cx", centerX);
-        circle.setAttribute("cy", centerY);
-        circle.setAttribute("r", r);
-        circle.setAttribute("class", "grid-line");
+        circle.setAttribute("cx", centerX); circle.setAttribute("cy", centerY);
+        circle.setAttribute("r", r); circle.setAttribute("class", "grid-line");
         gridGroup.appendChild(circle);
     }
-
-    // 2. 축(Axis) 라인 그리기
     for (let i = 0; i < axesCount; i++) {
         const angle = (Math.PI * 2 / axesCount) * i - (Math.PI / 2);
         const x2 = centerX + Math.cos(angle) * maxRadius;
         const y2 = centerY + Math.sin(angle) * maxRadius;
-
         const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", centerX);
-        line.setAttribute("y1", centerY);
-        line.setAttribute("x2", x2);
-        line.setAttribute("y2", y2);
+        line.setAttribute("x1", centerX); line.setAttribute("y1", centerY);
+        line.setAttribute("x2", x2); line.setAttribute("y2", y2);
         line.setAttribute("class", "axis-line");
         axesGroup.appendChild(line);
     }
-
-    // 3. 데이터 점 및 폴리곤 초기화 (점 0에서 시작)
-    const getPointsPath = (vals) => {
-        return vals.map((v, i) => {
-            const angle = (Math.PI * 2 / axesCount) * i - (Math.PI / 2);
-            const r = (maxRadius * v) / 100;
-            const x = centerX + Math.cos(angle) * r;
-            const y = centerY + Math.sin(angle) * r;
-            return { x, y };
-        });
-    };
-
-    // 애니메이션 트리거 (IntersectionObserver)
+    const getPointsPath = (vals) => vals.map((v, i) => {
+        const angle = (Math.PI * 2 / axesCount) * i - (Math.PI / 2);
+        const r = (maxRadius * v) / 100;
+        return { x: centerX + Math.cos(angle) * r, y: centerY + Math.sin(angle) * r };
+    });
     let hasAnimated = false;
     const observer = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && !hasAnimated) {
-            hasAnimated = true;
-            animateRadar();
+            hasAnimated = true; animateRadar();
         }
     }, { threshold: 0.5 });
-    
     observer.observe(svg);
-
     function animateRadar() {
-        const startTime = performance.now();
-        const duration = 1200;
-
+        const startTime = performance.now(); const duration = 1200;
         function update(currentTime) {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
-
-            const currentScores = scores.map(s => s * eased);
-            const pts = getPointsPath(currentScores);
-            
-            // 폴리곤 경로 업데이트
-            const d = pts.map((p, i) => (i === 0 ? `M ${p.x},${p.y}` : `L ${p.x},${p.y}`)).join(" ") + " Z";
-            poly.setAttribute("d", d);
-
-            // 점 그리기/업데이트
+            const progress = Math.min((currentTime - startTime) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const pts = getPointsPath(scores.map(s => s * eased));
+            poly.setAttribute("d", pts.map((p, i) => (i === 0 ? `M ${p.x},${p.y}` : `L ${p.x},${p.y}`)).join(" ") + " Z");
             pointsGroup.innerHTML = '';
             pts.forEach(p => {
-                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                circle.setAttribute("cx", p.x);
-                circle.setAttribute("cy", p.y);
-                circle.setAttribute("r", 4);
-                circle.setAttribute("class", "radar-point");
-                pointsGroup.appendChild(circle);
+                const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                c.setAttribute("cx", p.x); c.setAttribute("cy", p.y); c.setAttribute("r", 4);
+                c.setAttribute("class", "radar-point"); pointsGroup.appendChild(c);
             });
-
             if (progress < 1) requestAnimationFrame(update);
         }
         requestAnimationFrame(update);
@@ -410,309 +325,106 @@ function initRadarChart() {
 }
 
 /* ===================================
-   부드러운 스크롤 (앵커 링크)
+   통합 게시판 모달 시스템 (v1.3.0)
    =================================== */
-function initSmoothScroll() {
-    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-        anchor.addEventListener('click', (e) => {
-            e.preventDefault();
-            const targetId = anchor.getAttribute('href');
-            const targetEl = document.querySelector(targetId);
-            if (targetEl) {
-                targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        });
-    });
-}
+window.openPostModal = function(parentId = null) {
+    const modal = document.getElementById('hynix-post-modal');
+    const parentInput = document.getElementById('post-parent-id');
+    const titleEl = document.getElementById('modal-title');
+    if (!modal || !parentInput || !titleEl) return;
 
-/* ===================================
-   글리치 효과 인터랙션
-   =================================== */
-function initGlitchEffect() {
-    const glitchTexts = document.querySelectorAll('.glitch-text');
-    
-    glitchTexts.forEach(el => {
-        el.addEventListener('mouseover', () => {
-            el.style.animation = 'glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite';
-        });
-        
-        el.addEventListener('mouseout', () => {
-            el.style.animation = 'glitch-skew 4s infinite linear alternate-reverse';
-        });
-    });
-}
-
-/* ===================================
-   자유게시판 (Free Board - Supabase Backend)
-   =================================== */
-/* --- Supabase Configuration (Dynamically injected during deployment) --- */
-// Note: SUPABASE_URL and SUPABASE_ANON_KEY are prepended to this file by the build workflow.
-
-// Robust client initialization
-let supabaseClient = null;
-try {
-    const supabaseLib = window.supabase || (window.Supabase ? window.Supabase.supabase : null) || window.Supabase;
-    
-    // Check if variables are defined (either by prepend or by global window)
-    const url = typeof SUPABASE_URL !== 'undefined' ? SUPABASE_URL : (window.SUPABASE_URL || '');
-    const key = typeof SUPABASE_ANON_KEY !== 'undefined' ? SUPABASE_ANON_KEY : (window.SUPABASE_ANON_KEY || '');
-
-    if (supabaseLib && typeof supabaseLib.createClient === 'function' && url && url !== '__SUPABASE_URL__') {
-        supabaseClient = supabaseLib.createClient(url, key);
-        console.log('[DEBUG] Supabase client initialized successfully');
+    parentInput.value = parentId || '';
+    if (parentId) {
+        titleEl.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:10px; vertical-align:middle;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>답글 남기기';
+        document.getElementById('post-message').placeholder = "답글 내용을 입력하세요...";
     } else {
-        console.warn('Supabase configuration missing or invalid. Check GitHub Secrets.');
-    }
-} catch (e) {
-    console.error('Supabase initialization error:', e);
-}
-
-// Global handler for board submission to prevent refresh reliably
-window.handleBoardSubmit = function(event) {
-    // [CRITICAL] 1. IMMEDIATE Sync Prevention
-    if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-    }
-    
-    console.log('[DEBUG] Board Form Submission Detected (Reload Blocked)');
-
-    // 2. Perform async business logic separately
-    asyncBoardSubmission();
-    
-    return false; // Final fallback
-};
-
-async function asyncBoardSubmission() {
-    const submitBtn = document.querySelector('#board-form button[type="submit"]');
-    const nameInput = document.getElementById('board-name');
-    const passwordInput = document.getElementById('board-password');
-    const messageInput = document.getElementById('board-message');
-    
-    if (!messageInput || !passwordInput) {
-        console.error('[DEBUG] Form elements missing from DOM');
-        return;
+        titleEl.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:10px; vertical-align:middle;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>글 남기기';
+        document.getElementById('post-message').placeholder = "자유롭게 의견이나 질문을 남겨주세요.";
     }
 
-    const message = messageInput.value.trim();
-    const password = passwordInput.value.trim();
-    
-    // 익명일 경우 자동으로 4자리 숫자 아이디 부여
-    let name = nameInput.value.trim();
-    if (!name || name === '익명') {
-        const randomId = Math.floor(1000 + Math.random() * 9000);
-        name = `익명(${randomId})`;
-    }
-
-    if (!message || !password) {
-        alert('메시지와 비밀번호를 모두 입력해주세요.');
-        return;
-    }
-
-    if (!supabaseClient) {
-        console.error('[DEBUG] Supabase client is NULL');
-        alert('Supabase 연결에 실패했습니다. 사이트 개발자(Secret 설정) 확인이 필요합니다.');
-        return;
-    }
-
-    // UI Loading State
-    if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span>등록 중...</span><div class="loader"></div>';
-    }
-
-    try {
-        const newPost = { name, password, message };
-        console.log('[DEBUG] Sending payload to Supabase:', newPost);
-        const success = await savePost(newPost);
-        
-        if (success) {
-            if (nameInput) nameInput.value = '';
-            if (passwordInput) passwordInput.value = '';
-            if (messageInput) messageInput.value = '';
-            console.log('[DEBUG] Post saved successfully');
-            loadPosts(); // Refresh list
-        }
-    } catch (err) {
-        console.error('[DEBUG] Async submission error:', err);
-        alert('글 등록 중 시스템 오류가 발생했습니다.');
-    } finally {
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = '<span>게시글 등록하기</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>';
-        }
-    }
-}
-
-// Reply Modal Logic
-window.openReplyModal = function(parentId) {
-    const modal = document.getElementById('hynix-reply-modal');
-    const parentInput = document.getElementById('reply-parent-id');
-    if (!modal || !parentInput) return;
-    
-    parentInput.value = parentId;
+    document.getElementById('post-name').value = '';
+    document.getElementById('post-password').value = '';
+    document.getElementById('post-message').value = '';
     modal.classList.add('active');
-    
-    // Reset fields
-    document.getElementById('reply-name').value = '';
-    document.getElementById('reply-password').value = '';
-    document.getElementById('reply-message').value = '';
-    
-    document.getElementById('reply-message').focus();
+    document.getElementById('post-message').focus();
 };
 
-window.closeReplyModal = function() {
-    const modal = document.getElementById('hynix-reply-modal');
+window.closePostModal = function() {
+    const modal = document.getElementById('hynix-post-modal');
     if (modal) modal.classList.remove('active');
 };
 
-// Toggle Thread Visibility
+window.submitPost = async function() {
+    if (!supabaseClient) return;
+    const parentId = document.getElementById('post-parent-id').value;
+    const nameInput = document.getElementById('post-name');
+    const passwordInput = document.getElementById('post-password');
+    const messageInput = document.getElementById('post-message');
+    const message = messageInput.value.trim();
+    const password = passwordInput.value.trim();
+
+    if (!message || !password) { alert('내용과 비밀번호를 입력해주세요.'); return; }
+    let name = nameInput.value.trim();
+    if (!name || name === '익명') { name = `익명(${Math.floor(1000 + Math.random() * 9000)})`; }
+
+    const submitBtn = document.getElementById('post-submit-btn');
+    const originalText = submitBtn.innerText;
+    submitBtn.disabled = true; submitBtn.innerText = '등록 중...';
+
+    try {
+        const { error } = await supabaseClient.from('posts').insert([{ name, password, message, parent_id: parentId || null }]);
+        if (error) throw error;
+        closePostModal();
+        await loadPosts();
+        if (parentId) {
+            setTimeout(() => {
+                const wrapper = document.querySelector(`.board-post[data-id="${parentId}"] .replies-wrapper`);
+                if (wrapper) wrapper.style.display = 'block';
+            }, 100);
+        }
+    } catch (err) {
+        console.error('Post submission error:', err);
+        alert('오류가 발생했습니다: ' + err.message);
+    } finally {
+        submitBtn.disabled = false; submitBtn.innerText = originalText;
+    }
+};
+
 window.toggleReplies = function(parentId) {
     const postEl = document.querySelector(`.board-post[data-id="${parentId}"]`);
     if (!postEl) return;
-    
     const wrapper = postEl.querySelector('.replies-wrapper');
-    if (!wrapper) return;
-
-    if (wrapper.style.display === 'block') {
-        wrapper.style.display = 'none';
-    } else {
-        wrapper.style.display = 'block';
-    }
+    if (wrapper) wrapper.style.display = (wrapper.style.display === 'block') ? 'none' : 'block';
 };
 
-window.submitReply = async function() {
-    if (!supabaseClient) return;
-    
-    const parentId = document.getElementById('reply-parent-id').value;
-    const nameInput = document.getElementById('reply-name');
-    const passwordInput = document.getElementById('reply-password');
-    const messageInput = document.getElementById('reply-message');
-    
-    const message = messageInput.value.trim();
-    const password = passwordInput.value.trim();
-    
-    if (!message || !password) {
-        alert('내용과 비밀번호를 입력해주세요.');
-        return;
-    }
-    
-    let name = nameInput.value.trim();
-    if (!name || name === '익명') {
-        const randomId = Math.floor(1000 + Math.random() * 9000);
-        name = `익명(${randomId})`;
-    }
-    
-    const saveBtn = document.getElementById('reply-submit-btn');
-    saveBtn.disabled = true;
-    saveBtn.innerText = '등록 중...';
-    
-    try {
-        const { error } = await supabaseClient.from('posts').insert([{
-            name,
-            password,
-            message,
-            parent_id: parentId
-        }]);
-        
-        if (error) throw error;
-        
-        closeReplyModal();
-        await loadPosts(); // Refresh list
-        
-        // Auto-open the thread to show the new reply
-        setTimeout(() => {
-            const wrapper = document.querySelector(`.board-post[data-id="${parentId}"] .replies-wrapper`);
-            if (wrapper) wrapper.style.display = 'block';
-        }, 100);
-        
-    } catch (err) {
-        console.error('Reply submission error:', err);
-        alert('답글 등록 중 오류가 발생했습니다.');
-    } finally {
-        if (saveBtn) {
-            saveBtn.disabled = false;
-            saveBtn.innerText = '답글 등록';
-        }
-    }
-};
-
-// Keep initBoard for loading posts
-function initBoard() {
-    const form = document.getElementById('board-form');
-    if (!form) return;
-    
-    // Add event listener to prevent refresh correctly
-    form.addEventListener('submit', window.handleBoardSubmit);
-    
-    loadPosts();
-}
-
-async function savePost(post) {
-    if (!supabaseClient) return false;
-    const { error } = await supabaseClient.from('posts').insert([post]);
-    if (error) {
-        console.error('Error saving post:', error);
-        alert('게시글 저장 중 오류가 발생했습니다: ' + error.message);
-        return false;
-    }
-    await loadPosts();
-    return true;
-}
-
+/* ===================================
+   게시판 엔진 (Database Interface)
+   =================================== */
 async function loadPosts() {
-    console.log('[DEBUG] Loading posts from Supabase...');
-    if (!supabaseClient) {
-        console.warn('[DEBUG] Cannot load posts: Supabase client is missing');
-        return;
-    }
-    
+    if (!supabaseClient) return;
     try {
-        const { data, error } = await supabaseClient
-            .from('posts')
-            .select('*')
-            .order('timestamp', { ascending: false });
-        
-        if (error) {
-            console.error('[DEBUG] Supabase fetch error:', error);
-            if (error.code === 'PGRST116' || error.message.includes('relation "posts" does not exist')) {
-                const container = document.getElementById('board-posts');
-                if (container) container.innerHTML = '<div class="no-posts" style="color:var(--hynix-red);">[SYSTEM ERROR] DB 테이블이 생성되지 않았습니다. 가이드의 SQL을 실행해주세요!</div>';
-            }
-            return;
-        }
-        
-        console.log('[DEBUG] Posts loaded successfully:', data.length);
+        const { data, error } = await supabaseClient.from('posts').select('*').order('timestamp', { ascending: false });
+        if (error) throw error;
         renderPosts(data || []);
     } catch (e) {
-        console.error('[DEBUG] Unexpected loading error:', e);
+        console.error('[DEBUG] Loading error:', e);
     }
 }
 
 function renderPosts(posts) {
     const container = document.getElementById('board-posts');
     const countEl = document.getElementById('board-count');
-    
     if (!container || !countEl) return;
-    
     countEl.textContent = posts.length;
     container.innerHTML = '';
-    
     if (posts.length === 0) {
         container.innerHTML = '<div class="no-posts">아직 등록된 글이 없습니다. 첫 글을 남겨주세요!</div>';
         return;
     }
-
-    // 1단계 하이어라키 재구성 (부모글과 답글 분리)
     const parents = posts.filter(p => !p.parent_id);
     const children = posts.filter(p => p.parent_id);
-    
-    // 부모글은 최신순, 답글은 과거순(오래된것이 위)으로 정렬
     parents.forEach(post => {
-        const postReplies = children
-            .filter(c => c.parent_id === post.id)
-            .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-            
+        const postReplies = children.filter(c => c.parent_id === post.id).sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
         renderSinglePost(container, post, false, postReplies);
     });
 }
@@ -720,198 +432,108 @@ function renderPosts(posts) {
 function renderSinglePost(container, post, isReply, replies = []) {
     const date = new Date(post.timestamp);
     const formattedDate = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-    
     const el = document.createElement('div');
-    el.className = `board-post ${isReply ? 'reply' : 'parent'}`; 
+    el.className = `board-post ${isReply ? 'reply' : 'parent'}`;
     el.setAttribute('data-id', post.id);
     
     let repliesHtml = '';
     if (!isReply && replies.length > 0) {
-        repliesHtml = `
-            <div class="replies-wrapper" style="display: none;">
-                ${replies.map(reply => {
-                    const rDate = new Date(reply.timestamp);
-                    const rFormattedDate = `${rDate.getFullYear()}.${String(rDate.getMonth() + 1).padStart(2, '0')}.${String(rDate.getDate()).padStart(2, '0')} ${String(rDate.getHours()).padStart(2, '0')}:${String(rDate.getMinutes()).padStart(2, '0')}`;
-                    return `
-                        <div class="board-post reply" data-id="${reply.id}">
-                            <div class="post-header">
-                                <div class="post-header-left">
-                                    <span class="post-name">${escapeHtml(reply.name)}</span>
-                                    <span class="post-time">${rFormattedDate}</span>
-                                </div>
-                                <div class="post-actions">
-                                    <button class="btn-post-action edit" onclick="editPost('${reply.id}')" title="수정">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                                    </button>
-                                    <button class="btn-post-action delete" onclick="deletePost('${reply.id}')" title="삭제">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="post-body">
-                                ${escapeHtml(reply.message).replace(/\n/g, '<br>')}
-                            </div>
+        repliesHtml = `<div class="replies-wrapper" style="display: none;">${replies.map(reply => {
+            const rDate = new Date(reply.timestamp);
+            const rDateStr = `${rDate.getFullYear()}.${String(rDate.getMonth() + 1).padStart(2, '0')}.${String(rDate.getDate()).padStart(2, '0')} ${String(rDate.getHours()).padStart(2, '0')}:${String(rDate.getMinutes()).padStart(2, '0')}`;
+            return `
+                <div class="board-post reply" data-id="${reply.id}">
+                    <div class="post-header">
+                        <div class="post-header-left"><span class="post-name">${escapeHtml(reply.name)}</span><span class="post-time">${rDateStr}</span></div>
+                        <div class="post-actions">
+                            <button class="btn-post-action edit" onclick="editPost('${reply.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                            <button class="btn-post-action delete" onclick="deletePost('${reply.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
                         </div>
-                    `;
-                }).join('')}
-            </div>
-        `;
+                    </div>
+                    <div class="post-body">${escapeHtml(reply.message).replace(/\n/g, '<br>')}</div>
+                </div>`;
+        }).join('')}</div>`;
     }
 
     el.innerHTML = `
         <div class="post-header">
-            <div class="post-header-left">
-                <span class="post-name">${escapeHtml(post.name)}</span>
-                <span class="post-time">${formattedDate}</span>
-            </div>
+            <div class="post-header-left"><span class="post-name">${escapeHtml(post.name)}</span><span class="post-time">${formattedDate}</span></div>
             <div class="post-actions">
                 ${!isReply ? `
-                <button class="btn-post-action reply-toggle" onclick="${replies.length > 0 ? `toggleReplies('${post.id}')` : `openReplyModal('${post.id}')`}" title="${replies.length > 0 ? "답글 보기/작성" : "답글 작성"}">
+                <button class="btn-post-action reply-toggle" onclick="${replies.length > 0 ? `toggleReplies('${post.id}')` : `openPostModal('${post.id}')`}">
                     <span class="reply-count">${replies.length}</span>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 </button>
-                <button class="btn-post-action reply-add" onclick="openReplyModal('${post.id}')" title="신규 답글 작성" style="color: var(--hynix-red); margin-left: 4px;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                </button>
+                <button class="btn-post-action reply-add" onclick="openPostModal('${post.id}')" style="color: var(--hynix-red); margin-left: 4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
                 ` : ''}
-                <button class="btn-post-action edit" onclick="editPost('${post.id}')" title="수정">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                </button>
-                <button class="btn-post-action delete" onclick="deletePost('${post.id}')" title="삭제">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                </button>
+                <button class="btn-post-action edit" onclick="editPost('${post.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                <button class="btn-post-action delete" onclick="deletePost('${post.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
             </div>
         </div>
-        <div class="post-body">
-            ${escapeHtml(post.message).replace(/\n/g, '<br>')}
-        </div>
-        
-        <div class="post-edit-wrap">
-            <textarea class="post-edit-input">${escapeHtml(post.message)}</textarea>
-            <div class="post-edit-actions">
-                <button class="btn-post-action cancel" onclick="cancelEdit('${post.id}')">취소</button>
-                <button class="btn-post-action save" onclick="saveEdit('${post.id}')">저장</button>
-            </div>
-        </div>
-
-        ${repliesHtml}
-    `;
+        <div class="post-body">${escapeHtml(post.message).replace(/\n/g, '<br>')}</div>
+        <div class="post-edit-wrap"><textarea class="post-edit-input">${escapeHtml(post.message)}</textarea><div class="post-edit-actions"><button class="btn-post-action cancel" onclick="cancelEdit('${post.id}')">취소</button><button class="btn-post-action save" onclick="saveEdit('${post.id}')">저장</button></div></div>
+        ${repliesHtml}`;
     container.appendChild(el);
 }
 
-// Post Action Functions
 window.deletePost = async function(postId) {
     if (!supabaseClient) return;
-    
-    const { data: posts, error: fetchError } = await supabaseClient.from('posts').select('*').eq('id', postId);
-    if (fetchError || !posts.length) return;
-    const post = posts[0];
-
-    const pwd = prompt('게시글 삭제를 위해 비밀번호 4자리를 입력해주세요.\n(마스터 비밀번호로 강제 삭제 가능)');
-    if (pwd === null) return; // Cancelled
-    
-    if (pwd === post.password || pwd === '0000') {
-        if(confirm('정말 이 게시글을 삭제하시겠습니까?')) {
-            const { error: deleteError } = await supabaseClient.from('posts').delete().eq('id', postId);
-            if (deleteError) {
-                alert('삭제 중 오류가 발생했습니다.');
-            } else {
-                loadPosts();
-            }
-        }
-    } else {
-        alert('비밀번호가 일치하지 않습니다.');
-    }
+    const { data: posts } = await supabaseClient.from('posts').select('*').eq('id', postId);
+    if (!posts.length) return;
+    const pwd = prompt('삭제를 위해 비밀번호를 입력해주세요.');
+    if (pwd === posts[0].password || pwd === '0000') {
+        if(confirm('정말 삭제하시겠습니까?')) { await supabaseClient.from('posts').delete().eq('id', postId); loadPosts(); }
+    } else if (pwd !== null) { alert('비밀번호가 틀립니다.'); }
 };
 
-window.editPost = async function(postId) {
-    if (!supabaseClient) return;
-    
-    const { data: posts, error: fetchError } = await supabaseClient.from('posts').select('*').eq('id', postId);
-    if (fetchError || !posts.length) return;
-    const post = posts[0];
-
-    const pwd = prompt('게시글 수정을 위해 비밀번호 4자리를 입력해주세요.\n(마스터 비밀번호로 강제 수정 가능)');
-    if (pwd === null) return; // Cancelled
-
-    if (pwd === post.password || pwd === '0000') {
-        const postEl = document.querySelector(`.board-post[data-id="${postId}"]`);
-        if(postEl) {
-            postEl.classList.add('editing');
-        }
-    } else {
-        alert('비밀번호가 일치하지 않습니다.');
-    }
+window.editPost = function(postId) {
+    const postEl = document.querySelector(`.board-post[data-id="${postId}"]`);
+    if (postEl) postEl.classList.add('editing');
+    const wrap = postEl.querySelector('.post-edit-wrap');
+    if (wrap) wrap.style.display = 'block';
 };
 
 window.cancelEdit = function(postId) {
     const postEl = document.querySelector(`.board-post[data-id="${postId}"]`);
-    if(postEl) {
+    if (postEl) {
         postEl.classList.remove('editing');
-        const input = postEl.querySelector('.post-edit-input');
-        // Re-fetch or reset from DOM if needed, here we just clear the edit state
+        const wrap = postEl.querySelector('.post-edit-wrap');
+        if (wrap) wrap.style.display = 'none';
     }
 };
 
 window.saveEdit = async function(postId) {
-    if (!supabaseClient) return;
-    
     const postEl = document.querySelector(`.board-post[data-id="${postId}"]`);
-    if(!postEl) return;
-    
     const input = postEl.querySelector('.post-edit-input');
-    const newMsg = input.value.trim();
-    
-    if(!newMsg) return;
-
-    const { error: updateError } = await supabaseClient
-        .from('posts')
-        .update({ message: newMsg })
-        .eq('id', postId);
-
-    if (updateError) {
-        alert('저장 중 오류가 발생했습니다.');
-    } else {
-        loadPosts();
-    }
+    const { data } = await supabaseClient.from('posts').select('*').eq('id', postId);
+    const pwd = prompt('수정을 위해 비밀번호를 입력해주세요.');
+    if (pwd === data[0].password || pwd === '0000') {
+        await supabaseClient.from('posts').update({ message: input.value }).eq('id', postId);
+        cancelEdit(postId); loadPosts();
+    } else if (pwd !== null) { alert('비밀번호가 틀립니다.'); }
 };
 
-// Basic XSS protection
-function escapeHtml(unsafe) {
-    return unsafe
-         .replace(/&/g, "&amp;")
-         .replace(/</g, "&lt;")
-         .replace(/>/g, "&gt;")
-         .replace(/"/g, "&quot;")
-         .replace(/'/g, "&#039;");
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 /* ===================================
-   초기화 (Application Bootstrap)
+   초기화 (Initialization)
    =================================== */
 document.addEventListener('DOMContentLoaded', () => {
-    // 1순위: 게시판 기능 (가장 중요)
-    try {
-        initBoard();
-    } catch (e) {
-        console.error('initBoard failed:', e);
-    }
-
-    // 2순위: 비주얼 효과
-    try {
-        initParticles();
-        initHeroEffects();
-        initHeroTyping();
-        initActiveNavLink();
-        initMobileMenu();
-        initCounters();
-        initScrollReveal();
-        initModalBackdropClose();
-        initTerminalTyping();
-        initRadarChart();
-        initSmoothScroll();
-        initGlitchEffect();
-    } catch (error) {
-        console.error('Optimization/Visual initialization error:', error);
-    }
+    initParticles();
+    initHeroEffects();
+    initHeroTyping();
+    initActiveNavLink();
+    initMobileMenu();
+    initCounters();
+    initScrollReveal();
+    initModalBackdropClose();
+    initTerminalTyping();
+    initRadarChart();
+    if (typeof initSupabase === 'function') {
+        initSupabase().then(() => loadPosts());
+    } else { loadPosts(); }
 });

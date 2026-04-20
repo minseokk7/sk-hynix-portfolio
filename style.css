@@ -1215,13 +1215,11 @@ body {
 }
 
 .board-container {
-    display: grid;
-    grid-template-columns: 1fr 1.5fr;
-    gap: 3rem;
-    margin-top: 2rem;
+    max-width: 900px;
+    margin: 2rem auto 0;
 }
 
-.board-input-area, .board-list-area {
+.board-list-area {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: 20px;
@@ -1230,11 +1228,51 @@ body {
     transition: all 0.3s var(--ease-out-expo);
     position: relative;
     overflow: hidden;
+    width: 100%;
 }
 
-.board-input-area:hover, .board-list-area:hover {
+.board-list-area:hover {
     border-color: rgba(230, 0, 18, 0.2);
     box-shadow: var(--shadow-lg);
+}
+
+.board-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.btn-add-post {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--hynix-red);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(230,0,18,0.2);
+    transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.btn-add-post:hover {
+    background: #c20010;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(230,0,18,0.3);
+}
+
+.btn-add-post svg {
+    transition: transform 0.3s ease;
+}
+
+.btn-add-post:hover svg {
+    transform: rotate(90deg);
 }
 
 .board-input-area::before {
@@ -1758,6 +1796,47 @@ body {
     resize: vertical;
     min-height: 120px;
     line-height: 1.6;
+}
+
+
+/* --- Board Unified UI (v1.3.0) --- */
+.board-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.btn-add-post {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: var(--hynix-red);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s var(--ease-out-expo);
+    box-shadow: 0 4px 15px rgba(230, 0, 18, 0.2);
+}
+
+.btn-add-post:hover {
+    background: #c2000f;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(230, 0, 18, 0.3);
+}
+
+.btn-add-post svg {
+    transition: transform 0.3s ease;
+}
+
+.btn-add-post:hover svg {
+    transform: rotate(90deg);
 }
 
 @media (max-width: 600px) {

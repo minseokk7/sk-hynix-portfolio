@@ -589,25 +589,14 @@
             </div>
             
             <div class="board-container">
-                <div class="board-input-area">
-                    <h3>남기고 싶은 말</h3>
-                    <form id="board-form" class="board-form">
-                        <div class="form-group" style="display: flex; gap: 10px;">
-                            <input type="text" id="board-name" placeholder="이름 (익명 가능)" style="flex: 1;">
-                            <input type="password" id="board-password" placeholder="비밀번호 4자리 (수정/삭제용)" maxlength="4" style="flex: 1;" required>
-                        </div>
-                        <div class="form-group">
-                            <textarea id="board-message" placeholder="자유롭게 의견이나 질문을 남겨주세요." rows="4" required></textarea>
-                        </div>
-                        <button type="submit" class="btn-primary" style="width: 100%;">
-                            <span>게시글 등록하기</span>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-                        </button>
-                    </form>
-                </div>
-                
                 <div class="board-list-area">
-                    <h3>최근 게시물 <span id="board-count" class="board-count">0</span></h3>
+                    <div class="board-header-flex">
+                        <h3>최근 게시물 <span id="board-count" class="board-count">0</span></h3>
+                        <button class="btn-add-post" onclick="openPostModal()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            <span>새 글 쓰기</span>
+                        </button>
+                    </div>
                     <div id="board-posts" class="board-posts-container">
                         <!-- JS Rendering Area -->
                     </div>
@@ -649,38 +638,38 @@
         </div>
     </footer>
 
-    <!-- Unified Reply Modal (v1.1.9) -->
-    <div id="hynix-reply-modal" class="modal-overlay">
+    <!-- Unified Post Modal (v1.3.0) -->
+    <div id="hynix-post-modal" class="modal-overlay">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeReplyModal()">&times;</button>
+            <button class="modal-close" onclick="closePostModal()">&times;</button>
             <div class="modal-header">
-                <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px; vertical-align:middle;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>답글 남기기</h3>
+                <h3 id="modal-title"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:10px; vertical-align:middle;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>글 남기기</h3>
             </div>
             <div class="modal-body">
-                <input type="hidden" id="reply-parent-id">
+                <input type="hidden" id="post-parent-id">
                 <div class="hynix-form-container">
                     <div class="hynix-form-group">
                         <label class="hynix-label">작성자</label>
-                        <input type="text" id="reply-name" class="hynix-input" placeholder="닉네임 (미입력 시 익명)" maxlength="10">
+                        <input type="text" id="post-name" class="hynix-input" placeholder="닉네임 (미입력 시 익명)" maxlength="10">
                     </div>
                     <div class="hynix-form-group">
                         <label class="hynix-label">비밀번호</label>
-                        <input type="password" id="reply-password" class="hynix-input" placeholder="비밀번호 4자리" maxlength="4">
+                        <input type="password" id="post-password" class="hynix-input" placeholder="비밀번호 4자리" maxlength="4">
                     </div>
                     <div class="hynix-form-group full-width">
                         <label class="hynix-label">메시지</label>
-                        <textarea id="reply-message" class="hynix-textarea" placeholder="답글 내용을 입력하세요..." rows="4"></textarea>
+                        <textarea id="post-message" class="hynix-textarea" placeholder="당신의 소중한 의견을 들려주세요..." rows="4"></textarea>
                     </div>
                 </div>
             </div>
             <div class="modal-footer" style="padding-top: 1rem; border-top: 1px solid var(--border-color); margin-top: 2rem; display: flex; justify-content: flex-end; gap: 10px;">
-                <button class="btn-post-action cancel" onclick="closeReplyModal()" style="padding: 10px 20px; border-radius: 12px; font-weight: 600; background: var(--bg-secondary); border: 1px solid var(--border-color);">취소</button>
-                <button id="reply-submit-btn" class="btn-post-action save" onclick="submitReply()" style="padding: 10px 20px; border-radius: 12px; font-weight: 600; background: var(--hynix-red); color: white; border: none;">답글 등록</button>
+                <button class="btn-post-action cancel" onclick="closePostModal()" style="padding: 10px 20px; border-radius: 12px; font-weight: 600; background: var(--bg-secondary); border: 1px solid var(--border-color);">취소</button>
+                <button id="post-submit-btn" class="btn-post-action save" onclick="submitPost()" style="padding: 10px 20px; border-radius: 12px; font-weight: 600; background: var(--hynix-red); color: white; border: none;">등록하기</button>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script.js?v=1.2.0"></script>
+    <script src="script.js?v=1.3.0"></script>
 </body>
 </html>
