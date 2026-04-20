@@ -350,11 +350,11 @@ const SUPABASE_URL = '__SUPABASE_URL__';
 const SUPABASE_ANON_KEY = '__SUPABASE_ANON_KEY__';
 
 // Robust client initialization
-let supabase = null;
+let supabaseClient = null;
 try {
     const supabaseLib = window.supabase || (window.Supabase ? window.Supabase.supabase : null) || window.Supabase;
     if (supabaseLib && typeof supabaseLib.createClient === 'function' && SUPABASE_URL !== '__SUPABASE_URL__') {
-        supabase = supabaseLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        supabaseClient = supabaseLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     } else if (SUPABASE_URL === '__SUPABASE_URL__') {
         console.warn('Supabase placeholders not replaced. Development mode or local use requires manual key entry.');
     }
@@ -398,7 +398,7 @@ async function asyncBoardSubmission() {
         return;
     }
 
-    if (!supabase) {
+    if (!supabaseClient) {
         console.error('[DEBUG] Supabase client is NULL');
         alert('Supabase 연결에 실패했습니다. 사이트 개발자(Secret 설정) 확인이 필요합니다.');
         return;
@@ -445,8 +445,8 @@ function initBoard() {
 }
 
 async function savePost(post) {
-    if (!supabase) return false;
-    const { error } = await supabase.from('posts').insert([post]);
+    if (!supabaseClient) return false;
+    const { error } = await supabaseClient.from('posts').insert([post]);
     if (error) {
         console.error('Error saving post:', error);
         alert('게시글 저장 중 오류가 발생했습니다: ' + error.message);
@@ -458,13 +458,13 @@ async function savePost(post) {
 
 async function loadPosts() {
     console.log('[DEBUG] Loading posts from Supabase...');
-    if (!supabase) {
+    if (!supabaseClient) {
         console.warn('[DEBUG] Cannot load posts: Supabase client is missing');
         return;
     }
     
     try {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('posts')
             .select('*')
             .order('timestamp', { ascending: false });
@@ -538,9 +538,9 @@ function renderPosts(posts) {
 
 // Post Action Functions
 window.deletePost = async function(postId) {
-    if (!supabase) return;
+    if (!supabaseClient) return;
     
-    const { data: posts, error: fetchError } = await supabase.from('posts').select('*').eq('id', postId);
+    const { data: posts, error: fetchError } = await supabaseClient.from('posts').select('*').eq('id', postId);
     if (fetchError || !posts.length) return;
     const post = posts[0];
 
@@ -549,7 +549,7 @@ window.deletePost = async function(postId) {
     
     if (pwd === post.password || pwd === '0000') {
         if(confirm('정말 이 게시글을 삭제하시겠습니까?')) {
-            const { error: deleteError } = await supabase.from('posts').delete().eq('id', postId);
+            const { error: deleteError } = await supabaseClient.from('posts').delete().eq('id', postId);
             if (deleteError) {
                 alert('삭제 중 오류가 발생했습니다.');
             } else {
@@ -562,9 +562,9 @@ window.deletePost = async function(postId) {
 };
 
 window.editPost = async function(postId) {
-    if (!supabase) return;
+    if (!supabaseClient) return;
     
-    const { data: posts, error: fetchError } = await supabase.from('posts').select('*').eq('id', postId);
+    const { data: posts, error: fetchError } = await supabaseClient.from('posts').select('*').eq('id', postId);
     if (fetchError || !posts.length) return;
     const post = posts[0];
 
@@ -591,7 +591,7 @@ window.cancelEdit = function(postId) {
 };
 
 window.saveEdit = async function(postId) {
-    if (!supabase) return;
+    if (!supabaseClient) return;
     
     const postEl = document.querySelector(`.board-post[data-id="${postId}"]`);
     if(!postEl) return;
@@ -601,7 +601,7 @@ window.saveEdit = async function(postId) {
     
     if(!newMsg) return;
 
-    const { error: updateError } = await supabase
+    const { error: updateError } = await supabaseClient
         .from('posts')
         .update({ message: newMsg })
         .eq('id', postId);
