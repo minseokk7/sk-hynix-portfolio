@@ -25,21 +25,23 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      - name: Inject Secrets
+      - name: Inject Secrets (Prepending method)
         env:
           SB_URL: ${{ secrets.SUPABASE_URL }}
           SB_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
-          # Normalize line endings to LF to prevent sed issues on Linux
-          sed -i 's/\r//' script.js
+          # 1. Create a dynamic config header
+          echo "const SUPABASE_URL = '$SB_URL';" > config_header.js
+          echo "const SUPABASE_ANON_KEY = '$SB_KEY';" >> config_header.js
           
-          # Use safer sed with environment variables
-          sed -i "s|__SUPABASE_URL__|$SB_URL|g" script.js
-          sed -i "s|__SUPABASE_ANON_KEY__|$SB_KEY|g" script.js
+          # 2. Prepend the header to script.js
+          cat config_header.js script.js > script_new.js
+          mv script_new.js script.js
           
-          # Verification (Silent check)
-          if grep -q "__SUPABASE_URL__" script.js; then
-            echo "::error::Injection failed! Placeholder still exists."
+          # 3. Final verification
+          head -n 5 script.js
+          if ! grep -q "const SUPABASE_URL =" script.js; then
+            echo "::error::Injection failed! Config header is missing."
             exit 1
           fi
       - name: Upload artifact

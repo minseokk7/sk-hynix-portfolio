@@ -345,18 +345,23 @@ function initGlitchEffect() {
 /* ===================================
    자유게시판 (Free Board - Supabase Backend)
    =================================== */
-/* --- Supabase Configuration (Injected during deployment) --- */
-const SUPABASE_URL = '__SUPABASE_URL__';
-const SUPABASE_ANON_KEY = '__SUPABASE_ANON_KEY__';
+/* --- Supabase Configuration (Dynamically injected during deployment) --- */
+// Note: SUPABASE_URL and SUPABASE_ANON_KEY are prepended to this file by the build workflow.
 
 // Robust client initialization
 let supabaseClient = null;
 try {
     const supabaseLib = window.supabase || (window.Supabase ? window.Supabase.supabase : null) || window.Supabase;
-    if (supabaseLib && typeof supabaseLib.createClient === 'function' && SUPABASE_URL !== '__SUPABASE_URL__') {
-        supabaseClient = supabaseLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    } else if (SUPABASE_URL === '__SUPABASE_URL__') {
-        console.warn('Supabase placeholders not replaced. Development mode or local use requires manual key entry.');
+    
+    // Check if variables are defined (either by prepend or by global window)
+    const url = typeof SUPABASE_URL !== 'undefined' ? SUPABASE_URL : (window.SUPABASE_URL || '');
+    const key = typeof SUPABASE_ANON_KEY !== 'undefined' ? SUPABASE_ANON_KEY : (window.SUPABASE_ANON_KEY || '');
+
+    if (supabaseLib && typeof supabaseLib.createClient === 'function' && url && url !== '__SUPABASE_URL__') {
+        supabaseClient = supabaseLib.createClient(url, key);
+        console.log('[DEBUG] Supabase client initialized successfully');
+    } else {
+        console.warn('Supabase configuration missing or invalid. Check GitHub Secrets.');
     }
 } catch (e) {
     console.error('Supabase initialization error:', e);
