@@ -425,6 +425,10 @@ window.handleBoardSubmit = async function(event) {
 function initBoard() {
     const form = document.getElementById('board-form');
     if (!form) return;
+    
+    // Add event listener to prevent refresh correctly
+    form.addEventListener('submit', window.handleBoardSubmit);
+    
     loadPosts();
 }
 
