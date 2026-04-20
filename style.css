@@ -1328,7 +1328,7 @@ body {
 }
 
 .board-list-area:hover {
-    border-color: rgba(230, 0, 18, 0.2);
+    border-color: var(--hynix-orange);
     box-shadow: var(--shadow-lg);
 }
 
@@ -1403,7 +1403,7 @@ body {
     font-weight: 800;
 }
 
-.board-header-flex {
+.btn-add-post {
     display: flex;
     align-items: center;
     gap: 8px;
