@@ -496,7 +496,13 @@ async function asyncBoardSubmission() {
 
     const message = messageInput.value.trim();
     const password = passwordInput.value.trim();
-    const name = nameInput.value.trim() || '익명';
+    
+    // 익명일 경우 자동으로 4자리 숫자 아이디 부여
+    let name = nameInput.value.trim();
+    if (!name || name === '익명') {
+        const randomId = Math.floor(1000 + Math.random() * 9000);
+        name = `익명(${randomId})`;
+    }
 
     if (!message || !password) {
         alert('메시지와 비밀번호를 모두 입력해주세요.');
