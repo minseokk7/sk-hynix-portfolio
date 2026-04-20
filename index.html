@@ -658,19 +658,19 @@
             </div>
             <div class="modal-body">
                 <input type="hidden" id="reply-parent-id">
-                <div class="reply-form-grid">
-                    <div class="form-group">
-                        <label class="modal-label">작성자 (익명)</label>
-                        <input type="text" id="reply-name" class="reply-name" placeholder="닉네임 (미입력 시 익명)" maxlength="10">
+                <div class="hynix-form-container">
+                    <div class="hynix-form-group">
+                        <label class="hynix-label">작성자</label>
+                        <input type="text" id="reply-name" class="hynix-input" placeholder="닉네임 (미입력 시 익명)" maxlength="10">
                     </div>
-                    <div class="form-group">
-                        <label class="modal-label">비밀번호 (4자리)</label>
-                        <input type="password" id="reply-password" class="reply-password" placeholder="비밀번호" maxlength="4">
+                    <div class="hynix-form-group">
+                        <label class="hynix-label">비밀번호</label>
+                        <input type="password" id="reply-password" class="hynix-input" placeholder="비밀번호 4자리" maxlength="4">
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="modal-label">메시지</label>
-                    <textarea id="reply-message" class="reply-textarea" placeholder="답글 내용을 입력하세요..." rows="4"></textarea>
+                    <div class="hynix-form-group full-width">
+                        <label class="hynix-label">메시지</label>
+                        <textarea id="reply-message" class="hynix-textarea" placeholder="답글 내용을 입력하세요..." rows="4"></textarea>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer" style="padding-top: 1rem; border-top: 1px solid var(--border-color); margin-top: 2rem; display: flex; justify-content: flex-end; gap: 10px;">
@@ -681,6 +681,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script.js?v=1.1.9"></script>
+    <script src="script.js?v=1.2.0"></script>
 </body>
 </html>
