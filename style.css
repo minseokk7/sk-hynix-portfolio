@@ -463,8 +463,8 @@ body {
 
 /* Radar Chart Styling */
 .radar-chart-container {
-    max-width: 500px;
-    margin: 0 auto 4rem;
+    max-width: 450px;
+    margin: 0 auto 2.5rem;
     position: relative;
     padding: 20px;
 }
@@ -1356,11 +1356,8 @@ body {
     color: var(--text-muted);
 }
 
-.board-db-mention img {
-    opacity: 0.8;
-}
-
-.btn-add-post {
+/* Remove the footer-site-link styling since we reverted that change */
+.board-header-flex {
     display: flex;
     align-items: center;
     gap: 8px;

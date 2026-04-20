@@ -201,7 +201,7 @@ function animateCounter(counter) {
    =================================== */
 function initScrollReveal() {
     const targets = document.querySelectorAll(
-        '.dna-card, .project-card, .dt-skill-item, .terminal-window, .pace-item, .contact-content'
+        '.radar-chart-container, .dna-card, .project-card, .dt-skill-item, .terminal-window, .pace-item, .contact-content'
     );
     targets.forEach((el) => el.classList.add('reveal'));
 
@@ -322,7 +322,7 @@ function initRadarChart() {
         if (entries[0].isIntersecting && !hasAnimated) {
             hasAnimated = true; animateRadar();
         }
-    }, { threshold: 0.5 });
+    }, { threshold: 0.2 });
     observer.observe(svg);
     function animateRadar() {
         const startTime = performance.now(); const duration = 1200;
