@@ -1667,19 +1667,22 @@ body {
 
 /* --- Replies (Threaded) --- */
 .board-post.reply {
-    margin-left: 3rem;
+    margin-left: 3.5rem;
+    width: calc(100% - 3.5rem);
     position: relative;
-    background: var(--hynix-red-soft);
-    border-color: var(--hynix-red-glow);
+    background: var(--bg-primary);
+    border-color: var(--border-color);
+    border-left: 4px solid var(--hynix-red);
+    box-shadow: var(--shadow-sm);
 }
 
 .board-post.reply::before {
     content: '└';
     position: absolute;
-    left: -1.5rem;
-    top: 1rem;
+    left: -1.8rem;
+    top: 1.2rem;
     color: var(--hynix-red);
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     font-weight: bold;
 }
 
