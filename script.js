@@ -5,6 +5,14 @@
  */
 
 /* ===================================
+   데이터베이스 초기화 (Supabase)
+   GitHub Actions가 상단에 URL과 KEY를 주입합니다.
+   =================================== */
+const supabaseClient = (typeof supabase !== 'undefined' && typeof SUPABASE_URL !== 'undefined') 
+    ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) 
+    : null;
+
+/* ===================================
    설정값 (Configuration)
    =================================== */
 const CONFIG = {
