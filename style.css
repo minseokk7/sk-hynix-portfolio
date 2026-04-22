@@ -925,18 +925,19 @@ body {
 .project-number {
     font-size: 3.5rem;
     font-weight: 900;
-    color: var(--bg-secondary);
+    color: transparent;
     position: absolute;
     top: 1rem;
     right: 1.5rem;
     line-height: 1;
     -webkit-text-stroke: 1px var(--border-color);
+    paint-order: stroke fill;
     transition: all 0.4s ease;
+    pointer-events: none;
 }
 
 .project-card:hover .project-number {
     -webkit-text-stroke: 1px var(--hynix-red);
-    color: var(--hynix-red-soft);
 }
 
 .project-category {
@@ -2141,10 +2142,7 @@ body {
 
 
 
-/* --- Hynix Premium Form System (v1.2.0) --- */
-.hynix-form-container {
-    display: grid;
-/* --- Premium Design System Tokens (v1.3.1) --- */
+/* --- Hynix Premium Form System (v1.4.9 Update) --- */
 .hynix-form-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -2193,6 +2191,63 @@ body {
     resize: vertical;
     min-height: 140px;
     line-height: 1.6;
+}
+
+/* Modal Footer & Buttons */
+.hynix-modal-footer {
+    padding-top: 2rem;
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.hynix-btn {
+    padding: 12px 24px;
+    border-radius: 14px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s var(--ease-out-expo);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px solid transparent;
+}
+
+.hynix-btn-primary {
+    background: var(--hynix-red);
+    color: white;
+    box-shadow: 0 4px 15px rgba(230, 0, 18, 0.2);
+}
+
+.hynix-btn-primary:hover {
+    background: #c20010;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(230, 0, 18, 0.3);
+}
+
+.hynix-btn-secondary {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border-color: var(--border-color);
+}
+
+.hynix-btn-secondary:hover {
+    background: var(--bg-primary);
+    border-color: var(--text-muted);
+    color: var(--text-primary);
+    transform: translateY(-2px);
+}
+
+.hynix-btn svg {
+    transition: transform 0.3s ease;
+}
+
+.hynix-btn:hover svg {
+    transform: translateX(3px);
 }
 
 
