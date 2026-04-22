@@ -44,6 +44,90 @@
     --shadow-premium: 0 30px 100px rgba(15, 23, 42, 0.04), 0 4px 6px rgba(15, 23, 42, 0.02);
 }
 
+/* --- Board Excellence (v1.8.9 Hard-Fix) --- */
+.board-post {
+    background: #ffffff !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 20px !important;
+    padding: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+}
+.board-post.reply {
+    margin-left: 2.5rem !important;
+    background: #f8fafc !important;
+    border-left: 3px solid var(--hynix-red-soft) !important;
+    border-radius: 12px !important;
+    padding: 1.2rem !important;
+}
+.post-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 1rem !important;
+}
+.post-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+.btn-post-action {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    padding: 6px 10px !important;
+    color: var(--text-secondary) !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    gap: 5px !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    all: unset !important;
+    display: inline-flex !important;
+}
+.btn-post-action:hover {
+    background: var(--hynix-red-soft) !important;
+    border: 1px solid var(--hynix-red) !important;
+    color: var(--hynix-red) !important;
+}
+.post-edit-wrap {
+    display: none;
+    margin-top: 1rem !important;
+    padding: 1rem !important;
+    background: #f8fafc !important;
+    border-radius: 12px !important;
+    border: 1px dashed var(--hynix-red-soft) !important;
+}
+.post-edit-wrap.active {
+    display: block !important;
+}
+.post-edit-input {
+    width: 100% !important;
+    min-height: 100px !important;
+    background: #ffffff !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    font-family: inherit !important;
+    font-size: 0.95rem !important;
+    margin-bottom: 12px !important;
+    resize: vertical !important;
+}
+.post-edit-actions {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 10px !important;
+}
+.btn-post-action.save {
+    background: var(--hynix-red) !important;
+    border: 1px solid var(--hynix-red) !important;
+    color: #ffffff !important;
+}
+
 /* --- Reset & Base --- */
 *, *::before, *::after {
     margin: 0;
@@ -2605,114 +2689,4 @@ body {
     pointer-events: none;
 }
 
-/* ===================================
-   Board Excellence (v1.8.8 Fix)
-   =================================== */
-.board-post {
-    background: #ffffff;
-    border: 1px solid var(--border-color);
-    border-radius: 20px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    transition: all 0.3s ease;
-    position: relative;
-}
-.board-post:hover {
-    border-color: var(--hynix-red-soft);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
-}
-.board-post.reply {
-    margin-left: 2.5rem;
-    background: #f8fafc;
-    border-left: 3px solid var(--hynix-red-soft);
-    border-radius: 12px;
-    padding: 1.2rem;
-}
-.post-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-.post-header-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-.post-name {
-    font-weight: 800;
-    color: var(--hynix-red);
-    font-size: 0.95rem;
-}
-.post-time {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-}
-.post-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.btn-post-action {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: #f1f5f9;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 6px 10px;
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    gap: 5px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-.btn-post-action:hover {
-    background: var(--hynix-red-soft);
-    border-color: var(--hynix-red);
-    color: var(--hynix-red);
-}
-.btn-post-action.like:hover {
-    background: rgba(230, 0, 18, 0.1);
-}
-.post-body {
-    line-height: 1.7;
-    color: var(--text-primary);
-    font-size: 1rem;
-    margin-bottom: 1rem;
-}
-.post-edit-wrap {
-    display: none;
-    margin-top: 1rem;
-    padding: 1rem;
-    background: #f8fafc;
-    border-radius: 12px;
-    border: 1px dashed var(--hynix-red-soft);
-}
-.post-edit-input {
-    width: 100%;
-    min-height: 100px;
-    background: #ffffff;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 12px;
-    font-family: inherit;
-    font-size: 0.95rem;
-    margin-bottom: 12px;
-    resize: vertical;
-}
-.post-edit-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
-.btn-post-action.save {
-    background: var(--hynix-red);
-    border-color: var(--hynix-red);
-    color: #ffffff;
-}
-.btn-post-action.save:hover {
-    background: #c00010;
-    transform: scale(1.05);
-}
+/* End of Style */
