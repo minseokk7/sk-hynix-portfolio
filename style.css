@@ -2604,3 +2604,115 @@ body {
     z-index: 1;
     pointer-events: none;
 }
+
+/* ===================================
+   Board Excellence (v1.8.8 Fix)
+   =================================== */
+.board-post {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+}
+.board-post:hover {
+    border-color: var(--hynix-red-soft);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+}
+.board-post.reply {
+    margin-left: 2.5rem;
+    background: #f8fafc;
+    border-left: 3px solid var(--hynix-red-soft);
+    border-radius: 12px;
+    padding: 1.2rem;
+}
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.post-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.post-name {
+    font-weight: 800;
+    color: var(--hynix-red);
+    font-size: 0.95rem;
+}
+.post-time {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+.post-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.btn-post-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 6px 10px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    gap: 5px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+.btn-post-action:hover {
+    background: var(--hynix-red-soft);
+    border-color: var(--hynix-red);
+    color: var(--hynix-red);
+}
+.btn-post-action.like:hover {
+    background: rgba(230, 0, 18, 0.1);
+}
+.post-body {
+    line-height: 1.7;
+    color: var(--text-primary);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+.post-edit-wrap {
+    display: none;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px dashed var(--hynix-red-soft);
+}
+.post-edit-input {
+    width: 100%;
+    min-height: 100px;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    resize: vertical;
+}
+.post-edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+.btn-post-action.save {
+    background: var(--hynix-red);
+    border-color: var(--hynix-red);
+    color: #ffffff;
+}
+.btn-post-action.save:hover {
+    background: #c00010;
+    transform: scale(1.05);
+}
