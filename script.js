@@ -24,63 +24,124 @@ function initSupabaseClient() {
 }
 
 /* ===================================
-   설정값 (Configuration)
+   설정값 (v1.5.0 Premium)
    =================================== */
 const CONFIG = {
     particles: {
-        count: 30,
-        colors: ['#E60012', '#FF6B35', '#ffffff'],
-        sizeRange: [1, 3],
-        durationRange: [6, 14],
+        count: 50,
+        color: '#E60012',
+        connectColor: 'rgba(230, 0, 18, 0.1)',
+        particleSize: 1.5,
+        connectDistance: 150,
+        speed: 0.6
     },
     navScrollThreshold: 50,
-    parallaxIntensity: 0.3,
-    counterDuration: 2000,
-    revealThreshold: 0.15,
-    typingSpeed: 30,
-    terminalText: '본 포트폴리오는 수작업이 아닌, 명확한 설계 의도(Logic of Intent)를 바탕으로 AI 에이전트(Antigravity)를 지휘하는 Vibe Coding 기법으로 구축되었습니다. 이러한 시스템 아키텍트 역량과 AppSheet, Gemini API 실습 경험을 결합하여, 입사 후 반도체 장비의 에러 로그나 점검 데이터를 자동화 시스템으로 연동시켜 업무 효율을 극대화하는 하이브리드 DT 엔지니어 장민석이 되겠습니다.',
+    parallaxIntensity: 0.25,
+    counterDuration: 2500,
+    revealThreshold: 0.1,
+    typingSpeed: 25,
+    terminalText: '본 포트폴리오는 명확한 설계 의도(Logic of Intent)를 바탕으로 AI 에이전트를 지휘하는 Vibe Coding 기법으로 구축되었습니다. 이러한 시스템 아키텍트 역량과 실무 DT 경험을 결합하여, 하이닉스의 제조 인프라 혁신을 선도하는 하이브리드 엔지니어가 되겠습니다.',
 };
 
 /* ===================================
-   파티클 배경 애니메이션
+   Canvas 기반 지능형 파티클 시스템
    =================================== */
 function initParticles() {
+    const canvas = document.createElement('canvas');
     const container = document.getElementById('particles');
     if (!container) return;
-
-    const { count, colors, sizeRange, durationRange } = CONFIG.particles;
-
-    for (let i = 0; i < count; i++) {
-        const particle = document.createElement('div');
-        particle.classList.add('particle');
-
-        const size = Math.random() * (sizeRange[1] - sizeRange[0]) + sizeRange[0];
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        const duration = Math.random() * (durationRange[1] - durationRange[0]) + durationRange[0];
-        const delay = Math.random() * durationRange[1];
-        const left = Math.random() * 100;
-
-        particle.style.cssText = `
-            width: ${size}px;
-            height: ${size}px;
-            background: ${color};
-            left: ${left}%;
-            animation-duration: ${duration}s;
-            animation-delay: ${delay}s;
-        `;
-        container.appendChild(particle);
+    
+    container.innerHTML = ''; // 기존 CSS 파티클 제거
+    container.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    
+    let width, height, particles;
+    
+    function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
     }
+    
+    window.addEventListener('resize', resize);
+    resize();
+    
+    class Particle {
+        constructor() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.vx = (Math.random() - 0.5) * CONFIG.particles.speed;
+            this.vy = (Math.random() - 0.5) * CONFIG.particles.speed;
+        }
+        
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            if (this.x < 0 || this.x > width) this.vx *= -1;
+            if (this.y < 0 || this.y > height) this.vy *= -1;
+        }
+        
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, CONFIG.particles.particleSize, 0, Math.PI * 2);
+            ctx.fillStyle = CONFIG.particles.color;
+            ctx.fill();
+        }
+    }
+    
+    particles = Array.from({ length: CONFIG.particles.count }, () => new Particle());
+    
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+        
+        for (let i = 0; i < particles.length; i++) {
+            const p1 = particles[i];
+            p1.update();
+            p1.draw();
+            
+            for (let j = i + 1; j < particles.length; j++) {
+                const p2 = particles[j];
+                const dx = p1.x - p2.x;
+                const dy = p1.y - p2.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist < CONFIG.particles.connectDistance) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = CONFIG.particles.connectColor;
+                    ctx.lineWidth = 1 - dist / CONFIG.particles.connectDistance;
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.stroke();
+                }
+            }
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
 }
 
 /* ===================================
-   네비게이션 & 히어로 효과
+   네비게이션, 히어로 & 스크롤 진행 바
    =================================== */
 function initHeroEffects() {
     const navbar = document.getElementById('navbar');
     const heroBg = document.querySelector('.parallax-bg');
     
+    // 스크롤 진행 바 생성
+    const progressBar = document.createElement('div');
+    progressBar.style.cssText = `
+        position: fixed; top: 0; left: 0; height: 3px; 
+        background: var(--hynix-gradient); width: 0%; 
+        z-index: 1001; transition: width 0.1s ease;
+    `;
+    document.body.appendChild(progressBar);
+    
     window.addEventListener('scroll', () => {
         const scrolled = window.scrollY;
+        const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = (scrolled / totalHeight) * 100;
+        
+        progressBar.style.width = `${progress}%`;
+        
         if (navbar) {
             navbar.classList.toggle('scrolled', scrolled > CONFIG.navScrollThreshold);
         }
@@ -94,7 +155,7 @@ function initHeroTyping() {
     const titleEl = document.getElementById('hero-typing-target');
     if (!titleEl) return;
 
-    const text = '수율 1%의 차이를 만드는 디테일, 반도체 유지보수 엔지니어 장민석입니다.';
+    const text = '반도체 수율의 한계를 극복하는 혁신, 장민석입니다.';
     titleEl.textContent = '';
     
     let index = 0;
@@ -102,10 +163,10 @@ function initHeroTyping() {
         if (index < text.length) {
             titleEl.textContent += text.charAt(index);
             index++;
-            setTimeout(type, 100);
+            setTimeout(type, 80);
         }
     }
-    setTimeout(type, 500);
+    setTimeout(type, 800);
 }
 
 function initActiveNavLink() {
@@ -124,7 +185,7 @@ function initActiveNavLink() {
                 }
             });
         },
-        { threshold: 0.3 }
+        { threshold: 0.25 }
     );
     sections.forEach((section) => observer.observe(section));
 }
@@ -179,7 +240,7 @@ function initCounters() {
         { threshold: 0.5 }
     );
 
-    const statsContainer = document.querySelector('.hero-stats');
+    const statsContainer = document.querySelector('.hero-stats-compact');
     if (statsContainer) observer.observe(statsContainer);
 }
 
@@ -203,7 +264,7 @@ function animateCounter(counter) {
    =================================== */
 function initScrollReveal() {
     const targets = document.querySelectorAll(
-        '.radar-chart-container, .dna-card, .project-card, .dt-skill-item, .terminal-window, .pace-item, .contact-content'
+        '.hero-badge, .hero-title, .hero-subtitle, .hero-cta, .hero-stats-compact, .hero-visual-column, .radar-chart-container, .dna-card, .project-card, .dt-skill-item, .terminal-window, .pace-item, .contact-content'
     );
     targets.forEach((el) => el.classList.add('reveal'));
 
