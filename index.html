@@ -22,26 +22,36 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=1.3.9">
+    <link rel="stylesheet" href="style.css?v=1.4.3">
 </head>
 <body>
     <!-- Navigation -->
     <nav id="navbar" class="navbar">
         <div class="nav-container">
-            <a href="#hero" class="nav-logo">
+            <a href="#" class="nav-logo">
                 <span class="logo-bracket">&lt;</span>ME<span class="logo-dot">.</span>Portfolio<span class="logo-bracket">/&gt;</span>
             </a>
-            <ul class="nav-links">
-                <li><a href="#hero" class="nav-link active">Home</a></li>
-                <li><a href="#dna" class="nav-link">Maintenance DNA</a></li>
-                <li><a href="#projects" class="nav-link">Projects</a></li>
-                <li><a href="#dt-vibe" class="nav-link">DT & Vibe</a></li>
-                <li><a href="#board" class="nav-link">Board</a></li>
-                <li><a href="#contact" class="nav-link">Contact</a></li>
-            </ul>
-            <button id="mobile-toggle" class="mobile-toggle" aria-label="메뉴 열기">
-                <span></span><span></span><span></span>
-            </button>
+            
+            <div class="nav-dropdown-wrapper">
+                <button id="nav-toggle" class="nav-toggle">
+                    <span class="nav-toggle-text">EXPLORE</span>
+                    <div class="nav-toggle-icon">
+                        <span></span>
+                        <span></span>
+                    </div>
+                </button>
+                
+                <div id="nav-dropdown" class="nav-dropdown-menu">
+                    <ul class="nav-links">
+                        <li><a href="#home" class="nav-link">Home</a></li>
+                        <li><a href="#dna" class="nav-link">Maintenance DNA</a></li>
+                        <li><a href="#projects" class="nav-link">Projects</a></li>
+                        <li><a href="#dt-vibe" class="nav-link">DT & Vibe</a></li>
+                        <li><a href="#board" class="nav-link">Board</a></li>
+                        <li><a href="#contact" class="nav-link">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -320,91 +330,96 @@
     </section>
 
     <!-- STAR-R Modals -->
-
+    <!-- Modal 1 -->
     <div class="modal-overlay" id="modal-1">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal('modal-1')">&times;</button>
-            <div class="modal-header">
-                <div class="modal-main-image">
-                    <img src="images/automata_robot_1775442705414.png" alt="오토마타 로봇 상세보기">
+            <div class="modal-body">
+                <div class="modal-header">
+                    <div class="modal-main-image">
+                        <img src="images/automata_robot_1775442705414.png" alt="오토마타 로봇 상세보기">
+                    </div>
+                    <span class="modal-category">창의적공학설계</span>
+                    <h2>4/6/8족 달리는 로봇(오토마타) 기구학 설계 및 제작</h2>
                 </div>
-                <span class="modal-category">창의적공학설계</span>
-                <h2>4/6/8족 달리는 로봇(오토마타) 기구학 설계 및 제작</h2>
-            </div>
-            <div class="starr-framework">
-                <div class="starr-item">
-                    <div class="starr-label">S</div>
-                    <div class="starr-tag">Situation</div>
-                    <p>창의적공학설계 캡스톤디자인 과제로 구동 가능한 로봇 설계가 필요한 상황이었음.</p>
+                <div class="starr-framework">
+                    <div class="starr-item">
+                        <div class="starr-label">S</div>
+                        <div class="starr-tag">Situation</div>
+                        <p>창의적공학설계 캡스톤디자인 과제로 구동 가능한 로봇 설계가 필요한 상황이었음.</p>
+                    </div>
+                    <div class="starr-item">
+                        <div class="starr-label">T</div>
+                        <div class="starr-tag">Task</div>
+                        <p>시장 조사 및 기구학적 원리가 적용된 <strong>링크 메커니즘</strong> 로봇의 설계 및 제작.</p>
+                    </div>
+                    <div class="starr-item highlight">
+                        <div class="starr-label">A</div>
+                        <div class="starr-tag">Action</div>
+                        <p>한국전자전(KES) 및 반도체대전을 직접 관람하며 산업 트렌드를 분석하고, <strong>특허 검색 실습</strong>을 진행함. 이후 SolidWorks로 3D 모델링을 수행하고 레이저 가공기로 부품을 가공하여 조립함.</p>
+                    </div>
+                    <div class="starr-item highlight">
+                        <div class="starr-label">R</div>
+                        <div class="starr-tag">Result</div>
+                        <p><strong>로봇 구동 테스트 성공</strong> 및 링크 메커니즘 최적화를 통해 <strong>기존 설계 대비 기구학적 마찰 저항 약 12% 감소</strong> 확인.</p>
+                    </div>
+                    <div class="starr-item reflection">
+                        <div class="starr-label">R</div>
+                        <div class="starr-tag">Reflection</div>
+                        <p>현장 장비의 기구적 모순을 분석하고, <strong>창의적인(Creativity) 해결책</strong>을 제안하는 엔지니어가 되겠음.</p>
+                    </div>
                 </div>
-                <div class="starr-item">
-                    <div class="starr-label">T</div>
-                    <div class="starr-tag">Task</div>
-                    <p>시장 조사 및 기구학적 원리가 적용된 <strong>링크 메커니즘</strong> 로봇의 설계 및 제작.</p>
+                <div class="modal-pace">
+                    <span class="pace-badge creativity">🎨 Creativity</span>
+                    <span class="pace-badge execution">⚡ Execution</span>
                 </div>
-                <div class="starr-item highlight">
-                    <div class="starr-label">A</div>
-                    <div class="starr-tag">Action</div>
-                    <p>한국전자전(KES) 및 반도체대전을 직접 관람하며 산업 트렌드를 분석하고, <strong>특허 검색 실습</strong>을 진행함. 이후 SolidWorks로 3D 모델링을 수행하고 레이저 가공기로 부품을 가공하여 조립함.</p>
-                </div>
-                <div class="starr-item highlight">
-                    <div class="starr-label">R</div>
-                    <div class="starr-tag">Result</div>
-                    <p><strong>로봇 구동 테스트 성공</strong> 및 링크 메커니즘 최적화를 통해 <strong>기존 설계 대비 기구학적 마찰 저항 약 12% 감소</strong> 확인.</p>
-                </div>
-                <div class="starr-item reflection">
-                    <div class="starr-label">R</div>
-                    <div class="starr-tag">Reflection</div>
-                    <p>현장 장비의 기구적 모순을 분석하고, <strong>창의적인(Creativity) 해결책</strong>을 제안하는 엔지니어가 되겠음.</p>
-                </div>
-            </div>
-            <div class="modal-pace">
-                <span class="pace-badge creativity">🎨 Creativity</span>
-                <span class="pace-badge execution">⚡ Execution</span>
             </div>
         </div>
     </div>
 
+    <!-- Modal 2 -->
     <div class="modal-overlay" id="modal-2">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal('modal-2')">&times;</button>
-            <div class="modal-header">
-                <div class="modal-main-image">
-                    <img src="images/traffic_signal_1775442719307.png" alt="교통신호등 제어 회로">
+            <div class="modal-body">
+                <div class="modal-header">
+                    <div class="modal-main-image">
+                        <img src="images/traffic_signal_1775442719307.png" alt="교통신호등 제어 상세보기">
+                    </div>
+                    <span class="modal-category">디지털논리회로응용</span>
+                    <h2>동기 순차논리회로 기반 교통신호등 제어 회로 설계</h2>
                 </div>
-                <span class="modal-category">디지털논리회로응용</span>
-                <h2>동기 순차논리회로 기반 교통신호등 제어 회로 설계</h2>
-            </div>
-            <div class="starr-framework">
-                <div class="starr-item">
-                    <div class="starr-label">S</div>
-                    <div class="starr-tag">Situation</div>
-                    <p>플립플롭(Flip-Flop)을 활용해 순차적으로 동작하는 교통신호등의 제어 로직을 구현해야 했음.</p>
+                <div class="starr-framework">
+                    <div class="starr-item">
+                        <div class="starr-label">S</div>
+                        <div class="starr-tag">Situation</div>
+                        <p>플립플롭(Flip-Flop)을 활용해 순차적으로 동작하는 교통신호등의 제어 로직을 구현해야 했음.</p>
+                    </div>
+                    <div class="starr-item">
+                        <div class="starr-label">T</div>
+                        <div class="starr-tag">Task</div>
+                        <p>상태천이도(State Transition Diagram)를 작성하고, 카르노 맵을 통한 <strong>논리식 간소화 및 시뮬레이션 검증.</strong></p>
+                    </div>
+                    <div class="starr-item highlight">
+                        <div class="starr-label">A</div>
+                        <div class="starr-tag">Action</div>
+                        <p>D 플립플롭의 상태 방정식을 도출하고 LogicWorks를 이용해 회로를 설계함. 이후 브레드보드에 TTL IC 칩을 결선하여 <strong>회로의 타이밍 이슈를 해결</strong>함.</p>
+                    </div>
+                    <div class="starr-item highlight">
+                        <div class="starr-label">R</div>
+                        <div class="starr-tag">Result</div>
+                        <p>카르노 맵 최적화로 <strong>게이트 소자 수 20% 절감</strong> 및 <strong>오동작 0건(무결성 100%)</strong>의 시퀀스 제어 회로 구현 완수.</p>
+                    </div>
+                    <div class="starr-item reflection">
+                        <div class="starr-label">R</div>
+                        <div class="starr-tag">Reflection</div>
+                        <p>복잡한 시스템의 논리 상태를 추적하고 기판 레벨의 에러를 찾아내는 <strong>디지털 회로 분석 역량</strong>을 강화함.</p>
+                    </div>
                 </div>
-                <div class="starr-item">
-                    <div class="starr-label">T</div>
-                    <div class="starr-tag">Task</div>
-                    <p>상태천이도(State Transition Diagram)를 작성하고, 카르노 맵을 통한 <strong>논리식 간소화 및 시뮬레이션 검증.</strong></p>
+                <div class="modal-pace">
+                    <span class="pace-badge passion">🔥 Passion</span>
+                    <span class="pace-badge execution">⚡ Execution</span>
                 </div>
-                <div class="starr-item highlight">
-                    <div class="starr-label">A</div>
-                    <div class="starr-tag">Action</div>
-                    <p>D 플립플롭의 상태 방정식을 도출하고 LogicWorks를 이용해 회로를 설계함. 이후 브레드보드에 TTL IC 칩을 결선하여 <strong>회로의 타이밍 이슈를 해결</strong>함.</p>
-                </div>
-                <div class="starr-item highlight">
-                    <div class="starr-label">R</div>
-                    <div class="starr-tag">Result</div>
-                    <p>카르노 맵 최적화로 <strong>게이트 소자 수 20% 절감</strong> 및 <strong>오동작 0건(무결성 100%)</strong>의 시퀀스 제어 회로 구현 완수.</p>
-                </div>
-                <div class="starr-item reflection">
-                    <div class="starr-label">R</div>
-                    <div class="starr-tag">Reflection</div>
-                    <p>복잡한 시스템의 논리 상태를 추적하고 기판 레벨의 에러를 찾아내는 <strong>디지털 회로 분석 역량</strong>을 강화함.</p>
-                </div>
-            </div>
-            <div class="modal-pace">
-                <span class="pace-badge passion">🔥 Passion</span>
-                <span class="pace-badge execution">⚡ Execution</span>
             </div>
         </div>
     </div>
@@ -413,42 +428,44 @@
     <div class="modal-overlay" id="modal-3">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal('modal-3')">&times;</button>
-            <div class="modal-header">
-                <div class="modal-main-image">
-                    <img src="images/mechanical_dna_1775442627112.png" alt="팀 프로젝트 협업 규약">
+            <div class="modal-body">
+                <div class="modal-header">
+                    <div class="modal-main-image">
+                        <img src="images/mechanical_dna_1775442627112.png" alt="팀 프로젝트 협업 규약">
+                    </div>
+                    <span class="modal-category">팀 프로젝트 관리</span>
+                    <h2>팀워크 중심의 창의적 문제해결 프로세스 (그라운드 룰)</h2>
                 </div>
-                <span class="modal-category">팀 프로젝트 관리</span>
-                <h2>팀워크 중심의 창의적 문제해결 프로세스 (그라운드 룰)</h2>
-            </div>
-            <div class="starr-framework">
-                <div class="starr-item">
-                    <div class="starr-label">S</div>
-                    <div class="starr-tag">Situation</div>
-                    <p>다양한 배경의 팀원들이 모여 진행하는 설계 프로젝트에서 의견 충돌 및 진행 지연 문제가 예상됨.</p>
+                <div class="starr-framework">
+                    <div class="starr-item">
+                        <div class="starr-label">S</div>
+                        <div class="starr-tag">Situation</div>
+                        <p>다양한 배경의 팀원들이 모여 진행하는 설계 프로젝트에서 의견 충돌 및 진행 지연 문제가 예상됨.</p>
+                    </div>
+                    <div class="starr-item">
+                        <div class="starr-label">T</div>
+                        <div class="starr-tag">Task</div>
+                        <p>효율적인 협업을 위해 구체적인 <strong>그라운드 룰(Ground Rule) 및 소통 채널</strong>을 제안하고 구축.</p>
+                    </div>
+                    <div class="starr-item highlight">
+                        <div class="starr-label">A</div>
+                        <div class="starr-tag">Action</div>
+                        <p>MBTI 분석을 통해 팀원 성향을 파악하여 역할을 분담함(설계/가공/발표). '지각비 제도' 등 자발적 참여 유도 규칙을 정하고 매 회의마다 <strong>회의록 작성 및 공유 프로세스</strong>를 확립함.</p>
+                    </div>
+                    <div class="starr-item highlight">
+                        <div class="starr-label">R</div>
+                        <div class="starr-tag">Result</div>
+                        <p>팀원 이탈 없이 기한 내 <strong>목표 달성률 100%</strong>를 기록하며, 협업 툴 도입으로 <strong>정보 공유 속도 2배 향상</strong>.</p>
+                    </div>
+                    <div class="starr-item reflection">
+                        <div class="starr-label">R</div>
+                        <div class="starr-tag">Reflection</div>
+                        <p>SK 하이닉스 현업에서도 부서 간 원활한 소통을 이끄는 <strong>팀워크와 실행력(Execution)</strong>을 발휘하는 신뢰받는 엔지니어가 되겠음.</p>
+                    </div>
                 </div>
-                <div class="starr-item">
-                    <div class="starr-label">T</div>
-                    <div class="starr-tag">Task</div>
-                    <p>효율적인 협업을 위해 구체적인 <strong>그라운드 룰(Ground Rule) 및 소통 채널</strong>을 제안하고 구축.</p>
+                <div class="modal-pace">
+                    <span class="pace-badge execution">⚡ Execution</span>
                 </div>
-                <div class="starr-item highlight">
-                    <div class="starr-label">A</div>
-                    <div class="starr-tag">Action</div>
-                    <p>MBTI 분석을 통해 팀원 성향을 파악하여 역할을 분담함(설계/가공/발표). '지각비 제도' 등 자발적 참여 유도 규칙을 정하고 매 회의마다 <strong>회의록 작성 및 공유 프로세스</strong>를 확립함.</p>
-                </div>
-                <div class="starr-item highlight">
-                    <div class="starr-label">R</div>
-                    <div class="starr-tag">Result</div>
-                    <p>팀원 이탈 없이 기한 내 <strong>목표 달성률 100%</strong>를 기록하며, 협업 툴 도입으로 <strong>정보 공유 속도 2배 향상</strong>.</p>
-                </div>
-                <div class="starr-item reflection">
-                    <div class="starr-label">R</div>
-                    <div class="starr-tag">Reflection</div>
-                    <p>SK 하이닉스 현업에서도 부서 간 원활한 소통을 이끄는 <strong>팀워크와 실행력(Execution)</strong>을 발휘하는 신뢰받는 엔지니어가 되겠음.</p>
-                </div>
-            </div>
-            <div class="modal-pace">
-                <span class="pace-badge execution">⚡ Execution</span>
             </div>
         </div>
     </div>
@@ -457,44 +474,58 @@
     <div class="modal-overlay" id="modal-4">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal('modal-4')">&times;</button>
-            <div class="modal-header">
-                <div class="modal-main-image">
-                    <img src="images/ai_fault_log_app_prototype_1775445383491.png" alt="AI 자동화 앱 상세보기">
+            <div class="modal-body">
+                <div class="modal-header">
+                    <div class="modal-main-image">
+                        <img src="images/ai_fault_log_app_prototype_1775445383491.png" alt="AI 자동화 앱 상세보기">
+                    </div>
+                    <span class="modal-category">AI/DT 실무 교육</span>
+                    <h2>HBM 장비 고장 로그 분석용 AI 자동화 앱 프로토타입 설계</h2>
                 </div>
-                <span class="modal-category">AI/DT 실무 교육</span>
-                <h2>HBM 장비 고장 로그 분석용 AI 자동화 앱 프로토타입 설계</h2>
+                <div class="starr-framework">
+                    <div class="starr-item">
+                        <div class="starr-label">S</div>
+                        <div class="starr-tag">Situation</div>
+                        <p>반도체 장비 유지보수 시 발생하는 방대한 에러 로그 및 점검 데이터를 수동으로 기록·관리하여 고장 원인 분석 지연 위험이 있었음.</p>
+                    </div>
+                    <div class="starr-item">
+                        <div class="starr-label">T</div>
+                        <div class="starr-tag">Task</div>
+                        <p>AppSheet와 Gemini API를 활용하여 스마트폰 카메라로 로그를 스캔(OCR)하고 AI가 고장 가이드를 즉석 제공하는 시스템 프로토타입 설계.</p>
+                    </div>
+                    <div class="starr-item highlight">
+                        <div class="starr-label">A</div>
+                        <div class="starr-tag">Action</div>
+                        <p>AppSheet로 데이터베이스를 최적화하고, Gemini API 연동을 통해 이미지 기반 <strong>로그 텍스트 추출 및 고장 원인 매칭 로직</strong>을 구현하는 워크플로우를 설계함.</p>
+                    </div>
+                    <div class="starr-item highlight">
+                        <div class="starr-label">R</div>
+                        <div class="starr-tag">Result</div>
+                        <p>수동 입력 대비 <strong>데이터 처리 시간 80% 단축 기대</strong> 및 현장 대응 지능화 솔루션 가능성 제시.</p>
+                    </div>
+                    <div class="starr-item reflection">
+                        <div class="starr-label">R</div>
+                        <div class="starr-tag">Reflection</div>
+                        <p>SK 하이닉스 입사 후, 현장의 아날로그 데이터를 디지털로 전환하여 수율 향상에 앞장서는 <strong>하이브리드 DT 엔지니어</strong>가 되겠음.</p>
+                    </div>
+                </div>
+                <div class="modal-pace">
+                    <span class="pace-badge passion">🚀 Agility</span>
+                    <span class="pace-badge execution">⚡ Execution</span>
+                    <span class="pace-badge creativity">🤖 DT Skill</span>
+                </div>
             </div>
-            <div class="starr-framework">
-                <div class="starr-item">
-                    <div class="starr-label">S</div>
-                    <div class="starr-tag">Situation</div>
-                    <p>반도체 장비 유지보수 시 발생하는 방대한 에러 로그 및 점검 데이터를 수동으로 기록·관리하여 고장 원인 분석 지연 위험이 있었음.</p>
+        </div>
+    </div>
+
+    <!-- Board Modal -->
+    <div id="boardModal" class="modal-overlay">
+        <div class="modal-content board-modal-content">
+            <button class="modal-close" onclick="closeModal('boardModal')">&times;</button>
+            <div class="modal-body">
+                <div id="modalContent">
+                    <!-- 게시글 내용 동적 삽입 -->
                 </div>
-                <div class="starr-item">
-                    <div class="starr-label">T</div>
-                    <div class="starr-tag">Task</div>
-                    <p>AppSheet와 Gemini API를 활용하여 스마트폰 카메라로 로그를 스캔(OCR)하고 AI가 고장 가이드를 즉석 제공하는 시스템 프로토타입 설계.</p>
-                </div>
-                <div class="starr-item highlight">
-                    <div class="starr-label">A</div>
-                    <div class="starr-tag">Action</div>
-                    <p>AppSheet로 데이터베이스를 최적화하고, Gemini API 연동을 통해 이미지 기반 <strong>로그 텍스트 추출 및 고장 원인 매칭 로직</strong>을 구현하는 워크플로우를 설계함.</p>
-                </div>
-                <div class="starr-item highlight">
-                    <div class="starr-label">R</div>
-                    <div class="starr-tag">Result</div>
-                    <p>수동 입력 대비 <strong>데이터 처리 시간 80% 단축 기대</strong> 및 현장 대응 지능화 솔루션 가능성 제시.</p>
-                </div>
-                <div class="starr-item reflection">
-                    <div class="starr-label">R</div>
-                    <div class="starr-tag">Reflection</div>
-                    <p>SK 하이닉스 입사 후, 현장의 아날로그 데이터를 디지털로 전환하여 수율 향상에 앞장서는 <strong>하이브리드 DT 엔지니어</strong>가 되겠음.</p>
-                </div>
-            </div>
-            <div class="modal-pace">
-                <span class="pace-badge passion">🚀 Agility</span>
-                <span class="pace-badge execution">⚡ Execution</span>
-                <span class="pace-badge creativity">🤖 DT Skill</span>
             </div>
         </div>
     </div>
@@ -579,7 +610,7 @@
         </div>
     </section>
 
-        <!-- Free Board Section -->
+    <!-- Free Board Section -->
     <section id="board" class="board-section">
         <div class="section-container">
             <div class="section-header centered">
@@ -610,7 +641,6 @@
         </div>
     </section>
 
-
     <!-- Contact / Footer -->
     <section id="contact" class="contact-section">
         <div class="section-container">
@@ -638,25 +668,19 @@
 
     <footer class="footer">
         <div class="footer-container">
-            <div class="footer-tech-info">
-                <a href="https://pf.minseok.cfd" target="_blank" class="footer-site-link">[장민석의 홈페이지 주소 링크]</a>
-                <ul class="footer-features">
-                    <li>데이터베이스(Supabase Cloud)를 설정하여 실시간 연동 및 동적 게시판 기능을 직접 구현하였습니다.</li>
-                </ul>
-            </div>
             <p>Built with <span class="text-red">Vibe Coding</span> — Powered by Antigravity AI Agent</p>
             <p class="footer-sub">이 포트폴리오는 IAFA 아키텍처 기반 AI 에이전트 지휘로 구축되었습니다.</p>
         </div>
     </footer>
 
-    <!-- Unified Post Modal (v1.3.0) -->
+    <!-- Unified Post Modal -->
     <div id="hynix-post-modal" class="modal-overlay">
         <div class="modal-content">
             <button class="modal-close" onclick="closePostModal()">&times;</button>
-            <div class="modal-header">
-                <h3 id="modal-title"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:10px; vertical-align:middle;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>글 남기기</h3>
-            </div>
             <div class="modal-body">
+                <div class="modal-header">
+                    <h3 id="modal-title"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:10px; vertical-align:middle;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>글 남기기</h3>
+                </div>
                 <input type="hidden" id="post-parent-id">
                 <div class="hynix-form-container">
                     <div class="hynix-form-group">
@@ -671,16 +695,16 @@
                         <label class="hynix-label">메시지</label>
                         <textarea id="post-message" class="hynix-textarea" placeholder="당신의 소중한 의견을 들려주세요..." rows="4"></textarea>
                     </div>
+                    <div style="padding-top: 1rem; margin-top: 1rem; display: flex; justify-content: flex-end; gap: 10px;">
+                        <button class="btn-post-action cancel" onclick="closePostModal()" style="padding: 10px 20px; border-radius: 12px; font-weight: 600; background: var(--bg-secondary); border: 1px solid var(--border-color); cursor:pointer;">취소</button>
+                        <button id="post-submit-btn" class="btn-post-action save" onclick="submitPost()" style="padding: 10px 20px; border-radius: 12px; font-weight: 600; background: var(--hynix-red); color: white; border: none; cursor:pointer;">등록하기</button>
+                    </div>
                 </div>
-            </div>
-            <div class="modal-footer" style="padding-top: 1rem; border-top: 1px solid var(--border-color); margin-top: 2rem; display: flex; justify-content: flex-end; gap: 10px;">
-                <button class="btn-post-action cancel" onclick="closePostModal()" style="padding: 10px 20px; border-radius: 12px; font-weight: 600; background: var(--bg-secondary); border: 1px solid var(--border-color);">취소</button>
-                <button id="post-submit-btn" class="btn-post-action save" onclick="submitPost()" style="padding: 10px 20px; border-radius: 12px; font-weight: 600; background: var(--hynix-red); color: white; border: none;">등록하기</button>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script.js?v=1.3.9"></script>
+    <script src="script.js?v=1.4.0"></script>
 </body>
 </html>

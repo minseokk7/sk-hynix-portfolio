@@ -129,32 +129,34 @@ function initActiveNavLink() {
     sections.forEach((section) => observer.observe(section));
 }
 
-function initMobileMenu() {
-    const toggle = document.getElementById('mobile-toggle');
-    const navLinks = document.querySelector('.nav-links');
-    if (!toggle || !navLinks) return;
+/* ===================================
+   내비게이션 드롭다운 (EXPLORE)
+   =================================== */
+function initNavigation() {
+    const toggle = document.getElementById('nav-toggle');
+    const dropdown = document.getElementById('nav-dropdown');
+    if (!toggle || !dropdown) return;
 
-    toggle.addEventListener('click', () => {
-        navLinks.classList.toggle('open');
-        const spans = toggle.querySelectorAll('span');
-        const isOpen = navLinks.classList.contains('open');
-        if (isOpen) {
-            spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
-            spans[1].style.opacity = '0';
-            spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
-        } else {
-            spans[0].style.transform = '';
-            spans[1].style.opacity = '';
-            spans[2].style.transform = '';
-        }
+    toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggle.classList.toggle('active');
+        dropdown.classList.toggle('active');
     });
 
-    navLinks.querySelectorAll('.nav-link').forEach((link) => {
+    // 메뉴 항목 클릭 시 자동으로 닫기
+    dropdown.querySelectorAll('.nav-link').forEach((link) => {
         link.addEventListener('click', () => {
-            navLinks.classList.remove('open');
-            const spans = toggle.querySelectorAll('span');
-            spans.forEach((span) => { span.style.transform = ''; span.style.opacity = ''; });
+            toggle.classList.remove('active');
+            dropdown.classList.remove('active');
         });
+    });
+
+    // 외부 클릭 시 드롭다운 닫기
+    document.addEventListener('click', (e) => {
+        if (!toggle.contains(e.target) && !dropdown.contains(e.target)) {
+            toggle.classList.remove('active');
+            dropdown.classList.remove('active');
+        }
     });
 }
 
@@ -581,7 +583,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initHeroEffects();
     initHeroTyping();
     initActiveNavLink();
-    initMobileMenu();
+    initNavigation();
     initCounters();
     initScrollReveal();
     initModalBackdropClose();
