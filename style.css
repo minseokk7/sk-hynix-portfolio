@@ -67,6 +67,12 @@
     align-items: center !important;
     margin-bottom: 1rem !important;
 }
+.post-header-left {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
+}
 .post-actions {
     display: flex !important;
     align-items: center !important;
@@ -2643,6 +2649,26 @@ body {
     width: fit-content;
     box-shadow: var(--shadow-premium);
     backdrop-filter: blur(20px);
+}
+
+.post-header-left {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 2px !important;
+}
+
+.post-name {
+    font-weight: 800 !important;
+    color: var(--hynix-red) !important;
+    font-size: 0.95rem !important;
+    line-height: 1.2 !important;
+}
+
+.post-time {
+    font-size: 0.75rem !important;
+    color: var(--text-muted) !important;
+    opacity: 0.8 !important;
 }
 
 .proof-item {
