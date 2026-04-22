@@ -574,11 +574,11 @@ function renderSinglePost(container, post, isReply, replies = []) {
             <div class="post-actions">
                 ${!isReply ? `
                 <button class="btn-post-action like" onclick="toggleLike('${post.id}')" title="추천" style="background:transparent; border:none; padding:0;">
-                    <span class="like-count" style="margin-right:4px; color:var(--text-secondary); font-weight:800;">${post.likes || 0}</span>
+                    <span class="like-count" style="margin-right:6px; color:var(--text-secondary); font-weight:800;">${post.likes || 0}</span>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted);"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                 </button>
                 <button class="btn-post-action reply-toggle" onclick="${replies.length > 0 ? `toggleReplies('${post.id}')` : `openPostModal('${post.id}')`}" style="background:transparent; border:none; padding:0;">
-                    <span class="reply-count" style="margin-right:4px; color:var(--hynix-red); font-weight:800;">${replies.length}</span>
+                    <span class="reply-count" style="margin-right:6px; color:var(--hynix-red); font-weight:800;">${replies.length}</span>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--hynix-red);"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 </button>
                 <button class="btn-post-action reply-add" onclick="openPostModal('${post.id}')" style="background:transparent; border:none; padding:0; color: var(--hynix-red);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
