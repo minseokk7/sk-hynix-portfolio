@@ -1,0 +1,9 @@
+# robots.txt for pf.minseok.cfd
+# Optimized for SK Hynix Portfolio SEO
+
+User-agent: *
+Allow: /
+Disallow: /admin.html
+
+# Sitemap link (Enable this after creating sitemap.xml)
+# Sitemap: https://pf.minseok.cfd/sitemap.xml
